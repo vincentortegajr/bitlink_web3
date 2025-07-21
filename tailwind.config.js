@@ -6,6 +6,7 @@ export default {
     './components/**/*.{js,jsx}',
     './app/**/*.{js,jsx}',
     './src/**/*.{js,jsx}',
+    './index.html',
   ],
   prefix: "",
   theme: {
@@ -118,11 +119,58 @@ export default {
         'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
       backdropBlur: {
-        'glass': '8px',
+        'glass': '12px', // Enhanced for better visibility
+      },
+      // CRITICAL: Enhanced mobile viewport handling
+      screens: {
+        'xs': '475px',
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
+        // Custom mobile breakpoints
+        'mobile': {'max': '1023px'},
+        'desktop': '1024px',
       },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/typography"),
+    // Enhanced plugin configuration
+    function({ addUtilities, theme }) {
+      const newUtilities = {
+        // CRITICAL: Mobile viewport fixes
+        '.mobile-100vh': {
+          height: '100vh',
+          height: '100dvh',
+          height: '-webkit-fill-available',
+        },
+        '.mobile-min-100vh': {
+          minHeight: '100vh',
+          minHeight: '100dvh',
+          minHeight: '-webkit-fill-available',
+        },
+        // Enhanced touch targets
+        '.touch-target': {
+          minHeight: '44px',
+          minWidth: '44px',
+          touchAction: 'manipulation',
+          WebkitTapHighlightColor: 'transparent',
+        },
+        // Better focus rings
+        '.focus-ring-enhanced': {
+          '&:focus': {
+            outline: '2px solid var(--color-primary)',
+            outlineOffset: '2px',
+            borderRadius: '4px',
+          },
+        },
+      };
+      
+      addUtilities(newUtilities);
+    },
   ],
 }

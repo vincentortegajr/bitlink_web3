@@ -158,9 +158,9 @@ const ComponentLibrary = ({ onDragStart, isVisible, onClose }) => {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-80 bg-surface border-r border-border h-full overflow-y-auto">
-        <div className="p-4 border-b border-border">
-          <h2 className="text-lg font-semibold text-text-primary flex items-center space-x-2">
+      <div className="hidden lg:block w-80 bg-surface border-r-2 border-border/60 h-full overflow-y-auto shadow-sm">
+        <div className="p-4 border-b-2 border-border/40">
+          <h2 className="text-lg font-bold text-text-primary flex items-center space-x-2">
             <Icon name="Layers" size={20} />
             <span>Components</span>
           </h2>
@@ -168,16 +168,16 @@ const ComponentLibrary = ({ onDragStart, isVisible, onClose }) => {
         </div>
 
         {/* Category Tabs */}
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b-2 border-border/40">
           <div className="grid grid-cols-2 gap-2">
             {Object.entries(componentCategories).map(([key, category]) => (
               <button
                 key={key}
                 onClick={() => setActiveCategory(key)}
-                className={`flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition-smooth ${
+                className={`flex items-center space-x-2 p-2.5 rounded-lg text-sm font-semibold transition-all duration-200 border-2 ${
                   activeCategory === key
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-muted'
+                    ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-muted/60 border-transparent hover:border-border/40'
                 }`}
               >
                 <Icon name={category.icon} size={16} />
@@ -194,16 +194,16 @@ const ComponentLibrary = ({ onDragStart, isVisible, onClose }) => {
               key={component.id}
               draggable
               onDragStart={(e) => handleDragStart(e, component)}
-              className="p-3 border border-border rounded-lg cursor-grab hover:border-primary hover:shadow-subtle transition-smooth bg-card"
+              className="p-3 border-2 border-border/50 rounded-xl cursor-grab hover:border-primary/70 hover:shadow-lg transition-all duration-200 bg-card shadow-sm hover:bg-card/80"
             >
               <div className="flex items-start space-x-3">
-                <div className="p-2 bg-primary/10 text-primary rounded-md">
+                <div className="p-2 bg-primary/10 text-primary rounded-lg shadow-sm border border-primary/20">
                   <Icon name={component.icon} size={16} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-text-primary">{component.name}</h3>
-                  <p className="text-xs text-text-secondary mt-1">{component.description}</p>
-                  <div className="mt-2 p-2 bg-muted rounded text-xs text-text-secondary font-mono">
+                  <h3 className="text-sm font-semibold text-text-primary">{component.name}</h3>
+                  <p className="text-xs text-text-secondary mt-1 leading-relaxed">{component.description}</p>
+                  <div className="mt-2 p-2 bg-muted/60 rounded-md text-xs text-text-secondary font-mono border border-border/30">
                     {component.preview}
                   </div>
                 </div>
@@ -216,16 +216,16 @@ const ComponentLibrary = ({ onDragStart, isVisible, onClose }) => {
       {/* Mobile Bottom Sheet */}
       {isVisible && (
         <div className="lg:hidden fixed inset-0 bg-black/50 z-50 flex items-end">
-          <div className="w-full bg-surface rounded-t-lg max-h-[80vh] flex flex-col animate-fade-in">
-            <div className="p-4 border-b border-border">
+          <div className="w-full bg-surface rounded-t-xl max-h-[80vh] flex flex-col animate-fade-in border-t-2 border-border/60 shadow-2xl">
+            <div className="p-4 border-b-2 border-border/40">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-text-primary flex items-center space-x-2">
+                <h2 className="text-lg font-bold text-text-primary flex items-center space-x-2">
                   <Icon name="Layers" size={20} />
                   <span>Components</span>
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-muted rounded-md transition-smooth"
+                  className="p-2 hover:bg-muted/60 rounded-lg transition-all duration-200 border border-transparent hover:border-border/40"
                 >
                   <Icon name="X" size={20} />
                 </button>
@@ -234,16 +234,16 @@ const ComponentLibrary = ({ onDragStart, isVisible, onClose }) => {
             </div>
 
             {/* Mobile Category Tabs */}
-            <div className="p-4 border-b border-border">
+            <div className="p-4 border-b-2 border-border/40">
               <div className="flex space-x-2 overflow-x-auto pb-2">
                 {Object.entries(componentCategories).map(([key, category]) => (
                   <button
                     key={key}
                     onClick={() => setActiveCategory(key)}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-smooth ${
+                    className={`flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 border-2 ${
                       activeCategory === key
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-text-secondary hover:text-text-primary hover:bg-muted'
+                        ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-muted/60 border-transparent hover:border-border/40'
                     }`}
                   >
                     <Icon name={category.icon} size={16} />
@@ -260,16 +260,16 @@ const ComponentLibrary = ({ onDragStart, isVisible, onClose }) => {
                   key={component.id}
                   draggable
                   onDragStart={(e) => handleDragStart(e, component)}
-                  className="p-3 border border-border rounded-lg cursor-grab hover:border-primary hover:shadow-subtle transition-smooth bg-card"
+                  className="p-3 border-2 border-border/50 rounded-xl cursor-grab hover:border-primary/70 hover:shadow-lg transition-all duration-200 bg-card shadow-sm hover:bg-card/80"
                 >
                   <div className="flex items-start space-x-3">
-                    <div className="p-2 bg-primary/10 text-primary rounded-md">
+                    <div className="p-2 bg-primary/10 text-primary rounded-lg shadow-sm border border-primary/20">
                       <Icon name={component.icon} size={16} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-text-primary">{component.name}</h3>
-                      <p className="text-xs text-text-secondary mt-1">{component.description}</p>
-                      <div className="mt-2 p-2 bg-muted rounded text-xs text-text-secondary font-mono">
+                      <h3 className="text-sm font-semibold text-text-primary">{component.name}</h3>
+                      <p className="text-xs text-text-secondary mt-1 leading-relaxed">{component.description}</p>
+                      <div className="mt-2 p-2 bg-muted/60 rounded-md text-xs text-text-secondary font-mono border border-border/30">
                         {component.preview}
                       </div>
                     </div>

@@ -56,14 +56,19 @@
     /* Surface Color */
     --color-surface: #FFFFFF; /* white */
     
-    /* Text Colors */
-    --color-text-primary: #1E293B; /* slate-800 */
-    --color-text-secondary: #64748B; /* slate-500 */
+    /* Text Colors - ENHANCED CONTRAST */
+    --color-text-primary: #0F172A; /* slate-900 - increased contrast */
+    --color-text-secondary: #475569; /* slate-600 - increased contrast */
     
-    /* Mobile Navigation Spacing */
+    /* Mobile Navigation Spacing - ENHANCED */
     --mobile-nav-height: 88px; /* Actual height of mobile bottom navigation */
     --mobile-safe-bottom: max(24px, env(safe-area-inset-bottom)); /* Account for safe areas */
     --mobile-total-bottom: calc(var(--mobile-nav-height) + var(--mobile-safe-bottom));
+    
+    /* CRITICAL: Enhanced mobile viewport variables */
+    --vh: 1vh; /* Will be set by JavaScript for mobile viewport fixes */
+    --mobile-header-height: 64px; /* Fixed header height */
+    --mobile-content-height: calc(100vh - var(--mobile-header-height) - var(--mobile-total-bottom));
   }
 
   * {
@@ -73,28 +78,36 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
-    /* Prevent horizontal scroll on mobile */
+    /* CRITICAL: Prevent horizontal scroll on mobile */
     overflow-x: hidden;
-    /* Ensure proper mobile viewport handling */
+    /* CRITICAL: Ensure proper mobile viewport handling */
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
+    /* CRITICAL: Better font rendering on mobile */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
-  /* Ensure full viewport height handling */
+  /* CRITICAL: Ensure full viewport height handling */
   html {
     height: 100%;
     /* Better mobile viewport handling */
     height: -webkit-fill-available;
+    height: 100dvh; /* Dynamic viewport height */
   }
   
   body {
     min-height: 100vh;
     /* Better mobile viewport handling */
     min-height: -webkit-fill-available;
+    min-height: 100dvh; /* Dynamic viewport height */
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', sans-serif;
+    /* ENHANCED: Better text contrast and readability */
+    font-weight: 600;
+    letter-spacing: -0.025em;
   }
   
   .font-mono {
@@ -116,30 +129,33 @@
   }
   
   .shadow-subtle {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
   }
   
   .shadow-medium {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.08);
   }
   
   .shadow-prominent {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.08);
   }
   
   .backdrop-blur-glass {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px); /* Increased blur for better visibility */
+    -webkit-backdrop-filter: blur(12px);
   }
   
   .scale-hover {
     transform: scale(1.02);
   }
 
-  /* ENHANCED Mobile-First Utilities - CRITICAL FIXES */
+  /* CRITICAL FIXES: Enhanced Mobile-First Utilities */
   .touch-manipulation {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    /* CRITICAL: Better touch response */
+    user-select: none;
+    -webkit-user-select: none;
   }
   
   .safe-area-pb {
@@ -147,7 +163,7 @@
   }
   
   .safe-area-pt {
-    padding-top: env(safe-area-inset-top);
+    padding-top: max(16px, env(safe-area-inset-top));
   }
   
   .safe-area-pl {
@@ -173,32 +189,41 @@
     padding-bottom: var(--mobile-total-bottom);
   }
   
-  /* ENHANCED: Scrollable area with mobile considerations */
+  /* CRITICAL FIX: Enhanced scrollable area with mobile considerations */
   .mobile-scroll-container {
     max-height: calc(100vh - 64px); /* Account for header */
     overflow-y: auto;
+    overflow-x: hidden; /* CRITICAL: Prevent horizontal scroll */
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
     scroll-behavior: smooth;
     /* CRITICAL: Better touch handling */
     touch-action: pan-y;
-    /* CRITICAL: Prevent momentum scrolling issues */
-    -webkit-overflow-scrolling: touch;
-    /* CRITICAL: Smooth scrolling on all devices */
+    /* CRITICAL: Enhanced scrollbar styling */
     scrollbar-width: thin;
-    scrollbar-color: theme('colors.muted.DEFAULT') transparent;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    /* CRITICAL: Prevent momentum scrolling issues on iOS */
+    -webkit-overflow-scrolling: touch;
+    /* CRITICAL: Better performance */
+    will-change: scroll-position;
+    /* CRITICAL: Contain layout shifts */
+    contain: layout style paint;
   }
   
-  /* Full height mobile layout - IMPROVED */
+  /* ENHANCED: Full height mobile layout with proper viewport handling */
   .mobile-full-height {
     min-height: 100vh;
     min-height: -webkit-fill-available;
     min-height: 100dvh; /* Dynamic viewport height */
+    /* CRITICAL: Handle different viewport scenarios */
+    height: 100vh;
+    height: -webkit-fill-available;
+    height: 100dvh;
   }
   
-  /* CRITICAL: Enhanced mobile viewport fixes for better scrolling */
+  /* CRITICAL FIXES: Enhanced mobile viewport fixes for better scrolling */
   .mobile-viewport-fix {
-    /* Prevent bounce scrolling */
+    /* CRITICAL: Prevent bounce scrolling */
     overscroll-behavior: none;
     /* Better touch scrolling on iOS */
     -webkit-overflow-scrolling: touch;
@@ -210,22 +235,65 @@
     height: 100vh;
     height: -webkit-fill-available;
     height: 100dvh;
+    /* CRITICAL: Better performance */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
   }
 
-  /* ENHANCED: High Contrast Support for Accessibility */
+  /* ENHANCED: High Contrast Support for Accessibility - CRITICAL FIXES */
   .contrast-more\:text-black {
-    color: #000000;
+    color: #000000 !important;
+    font-weight: 600 !important;
   }
   
   .contrast-more\:text-gray-700 {
-    color: #374151;
+    color: #374151 !important;
+    font-weight: 500 !important;
   }
   
   .contrast-more\:text-gray-600 {
-    color: #4B5563;
+    color: #4B5563 !important;
+    font-weight: 500 !important;
+  }
+  
+  .contrast-more\:text-gray-800 {
+    color: #1F2937 !important;
+    font-weight: 600 !important;
+  }
+  
+  .contrast-more\:font-medium {
+    font-weight: 500 !important;
+  }
+  
+  .contrast-more\:font-semibold {
+    font-weight: 600 !important;
+  }
+  
+  .contrast-more\:font-bold {
+    font-weight: 700 !important;
+  }
+  
+  .contrast-more\:bg-primary {
+    background-color: var(--color-primary) !important;
+  }
+  
+  .contrast-more\:bg-accent {
+    background-color: var(--color-accent) !important;
+  }
+  
+  .contrast-more\:bg-success {
+    background-color: var(--color-success) !important;
+  }
+  
+  .contrast-more\:bg-warning {
+    background-color: var(--color-warning) !important;
+  }
+  
+  .contrast-more\:text-white {
+    color: #ffffff !important;
   }
 
-  /* Accessibility Utilities */
+  /* Enhanced Accessibility Utilities */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -238,9 +306,9 @@
     border: 0;
   }
 
-  /* Focus Indicators */
+  /* Enhanced Focus Indicators */
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface;
   }
   
   .focus-ring-inset {
@@ -256,36 +324,42 @@
     animation: scaleIn 0.15s ease-out;
   }
 
-  /* Scrollbar Utilities */
+  /* ENHANCED: Scrollbar Utilities with better visibility */
   .scrollbar-thin {
     scrollbar-width: thin;
   }
   
   .scrollbar-thumb-muted {
-    scrollbar-color: theme('colors.muted.DEFAULT') transparent;
+    scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
   }
   
   .scrollbar-track-transparent {
     scrollbar-track-color: transparent;
   }
   
-  /* WebKit Scrollbar Styles */
+  /* ENHANCED: WebKit Scrollbar Styles with better visibility */
   .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px; /* Slightly wider for better visibility */
+    height: 8px;
   }
   
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;
+    border-radius: 4px;
   }
   
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: theme('colors.muted.DEFAULT');
-    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.25); /* More visible */
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
   
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: theme('colors.muted.foreground');
+    background: rgba(0, 0, 0, 0.4); /* Even more visible on hover */
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-corner {
+    background: transparent;
   }
 
   /* Responsive Text Utilities */
@@ -326,39 +400,61 @@
     }
   }
   
-  /* CRITICAL: Enhanced mobile-specific responsive breakpoints */
+  /* CRITICAL FIXES: Enhanced mobile-specific responsive breakpoints */
   @media (max-width: 1023px) {
-    /* Ensure all mobile pages have proper bottom spacing */
+    /* CRITICAL: Ensure all mobile pages have proper bottom spacing */
     .min-h-screen {
       padding-bottom: var(--mobile-total-bottom);
     }
     
-    /* ENHANCED: Fix scrollable areas on mobile */
+    /* CRITICAL FIX: Enhanced scrollable areas on mobile */
     .overflow-y-auto {
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
       scroll-behavior: smooth;
+      /* CRITICAL: Better performance on mobile */
+      will-change: scroll-position;
+      contain: layout style paint;
     }
     
     /* CRITICAL: Ensure proper touch targets */
-    button, [role="button"], input, select, textarea {
+    button, [role="button"], input, select, textarea, a {
       min-height: 44px;
-      min-width: 44px;
       touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     
     /* CRITICAL: Better focus management on mobile */
     :focus {
-      outline: 2px solid theme('colors.primary.DEFAULT');
+      outline: 2px solid var(--color-primary);
       outline-offset: 2px;
+    }
+    
+    /* CRITICAL: Enhanced text sizing for mobile readability */
+    body {
+      font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    input, textarea, select {
+      font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    /* CRITICAL: Better button spacing on mobile */
+    .space-x-1 > * + * {
+      margin-left: 0.5rem;
+    }
+    
+    .space-x-2 > * + * {
+      margin-left: 0.75rem;
     }
   }
   
-  /* ENHANCED: iOS Safari specific fixes */
+  /* CRITICAL FIXES: iOS Safari specific fixes */
   @supports (-webkit-touch-callout: none) {
     .mobile-full-height {
       min-height: -webkit-fill-available;
       min-height: 100dvh;
+      height: -webkit-fill-available;
     }
     
     /* CRITICAL: Fix for iOS Safari viewport issues */
@@ -366,6 +462,9 @@
       position: relative;
       overflow: hidden auto;
       height: -webkit-fill-available;
+      /* CRITICAL: Prevent rubber band scrolling */
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: none;
     }
     
     /* CRITICAL: Prevent iOS rubber band scrolling */
@@ -373,14 +472,52 @@
       -webkit-overflow-scrolling: touch;
       overflow: -moz-scrollbars-none;
       -ms-overflow-style: none;
+      /* CRITICAL: Better performance */
+      will-change: scroll-position;
+      transform: translateZ(0);
+    }
+    
+    /* CRITICAL: Fix input zoom issues on iOS */
+    input, textarea, select {
+      font-size: 16px !important; /* Force 16px to prevent zoom */
     }
   }
   
-  /* CRITICAL: Android Chrome specific fixes */
+  /* CRITICAL FIXES: Android Chrome specific fixes */
   @supports (display: -webkit-box) {
     .mobile-viewport-fix {
       height: 100vh;
       height: 100dvh;
+    }
+    
+    /* Better Android scrolling */
+    .mobile-scroll-container {
+      overscroll-behavior: contain;
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* CRITICAL: Enhanced high contrast mode support */
+  @media (prefers-contrast: high) {
+    :root {
+      --color-text-primary: #000000;
+      --color-text-secondary: #2D3748;
+      --color-border: #2D3748;
+      --color-muted: #F7FAFC;
+    }
+    
+    .text-text-primary {
+      color: #000000 !important;
+      font-weight: 600 !important;
+    }
+    
+    .text-text-secondary {
+      color: #2D3748 !important;
+      font-weight: 500 !important;
+    }
+    
+    button, .bg-primary, .bg-accent {
+      border: 2px solid #000000 !important;
     }
   }
 }
@@ -405,7 +542,7 @@
   }
 }
 
-/* Dark mode CSS variables */
+/* ENHANCED: Dark mode CSS variables with better contrast */
 [data-theme="dark"] {
   /* Core Colors */
   --color-background: #0F172A; /* slate-900 */
@@ -457,16 +594,26 @@
   /* Surface Color */
   --color-surface: #1E293B; /* slate-800 */
   
-  /* Text Colors */
-  --color-text-primary: #F8FAFC; /* slate-50 */
-  --color-text-secondary: #94A3B8; /* slate-400 */
+  /* Text Colors - ENHANCED CONTRAST */
+  --color-text-primary: #FFFFFF; /* white - maximum contrast */
+  --color-text-secondary: #CBD5E1; /* slate-300 - increased contrast */
 }
 
-/* Dark mode scrollbar adjustments */
+/* ENHANCED: Dark mode scrollbar adjustments */
 [data-theme="dark"] .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: theme('colors.slate.600');
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="dark"] .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.slate.500');
+  background: rgba(255, 255, 255, 0.4);
+}
+
+[data-theme="dark"] .scrollbar-thumb-muted {
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+/* CRITICAL: JavaScript will set this for better mobile viewport handling */
+:root {
+  --vh: 1vh;
 }
