@@ -162,10 +162,10 @@ const ProfileBuilderDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-6">
+    <div className="mobile-full-height mobile-viewport-fix bg-background">
       {/* NAVIGATION INTEGRATION - Easy AI Studio Access */}
-      <div className="container mx-auto px-4 py-6">
-        {/* Quick AI Tools Access Banner */}
+      <div className="container mx-auto px-4 py-6 mobile-container">
+        {/* Quick AI Tools Access Banner - IMPROVED MOBILE LAYOUT */}
         <div className="mb-6 bg-gradient-to-r from-accent/10 to-primary/10 rounded-2xl p-4 border border-accent/20">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -203,7 +203,8 @@ const ProfileBuilderDashboard = () => {
           onShare={handleShare}
         />
 
-        <div className="flex h-[calc(100vh-8rem)]">
+        {/* FIXED MOBILE LAYOUT AND SCROLLING */}
+        <div className="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-12rem)]">
           {/* Component Library */}
           <ComponentLibrary
             onDragStart={handleDragStart}
@@ -211,14 +212,14 @@ const ProfileBuilderDashboard = () => {
             onClose={() => setShowComponentLibrary(false)}
           />
 
-          {/* Main Preview Area */}
-          <div className="flex-1 p-4 lg:p-6 overflow-y-auto bg-muted/30">
-            <div className="max-w-4xl mx-auto pb-24 md:pb-6">
-              <div className="mb-6">
+          {/* Main Preview Area - FIXED MOBILE SCROLLING */}
+          <div className="flex-1 p-2 lg:p-6 order-2 lg:order-1">
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-4 lg:mb-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <h1 className="text-2xl font-bold text-text-primary">Profile Builder</h1>
-                    <p className="text-text-secondary">Create your Web3 profile page</p>
+                    <h1 className="text-xl lg:text-2xl font-bold text-text-primary">Profile Builder</h1>
+                    <p className="text-sm lg:text-base text-text-secondary">Create your Web3 profile page</p>
                   </div>
                   
                   {/* Mobile Action Buttons - IMPROVED ACCESSIBILITY & FUNCTIONALITY */}
@@ -247,32 +248,39 @@ const ProfileBuilderDashboard = () => {
                 </div>
               </div>
 
-              <ProfilePreview
-                profileData={profileData}
-                components={components}
-                selectedComponent={selectedComponent}
-                onComponentSelect={handleComponentSelect}
-                onComponentDelete={handleComponentDelete}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                viewMode={viewMode}
-              />
+              {/* MOBILE SCROLLABLE CONTAINER */}
+              <div className="mobile-scroll-container lg:h-auto overflow-y-auto lg:overflow-visible">
+                <ProfilePreview
+                  profileData={profileData}
+                  components={components}
+                  selectedComponent={selectedComponent}
+                  onComponentSelect={handleComponentSelect}
+                  onComponentDelete={handleComponentDelete}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  viewMode={viewMode}
+                />
+                {/* Mobile safe area padding */}
+                <div className="h-6 lg:h-0 safe-area-pb"></div>
+              </div>
             </div>
           </div>
 
-          {/* Property Panel */}
-          <PropertyPanel
-            selectedComponent={selectedComponent}
-            onUpdateComponent={handleComponentUpdate}
-            onClose={() => {
-              setShowPropertyPanel(false);
-              setSelectedComponent(null);
-            }}
-            isVisible={showPropertyPanel}
-          />
+          {/* Property Panel - IMPROVED MOBILE POSITIONING */}
+          <div className="order-3 lg:order-2">
+            <PropertyPanel
+              selectedComponent={selectedComponent}
+              onUpdateComponent={handleComponentUpdate}
+              onClose={() => {
+                setShowPropertyPanel(false);
+                setSelectedComponent(null);
+              }}
+              isVisible={showPropertyPanel}
+            />
+          </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Quick Actions - IMPROVED MOBILE OVERLAY */}
         <QuickActions
           onAddComponent={handleAddComponent}
           isVisible={showQuickActions}

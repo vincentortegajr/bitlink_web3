@@ -59,6 +59,11 @@
     /* Text Colors */
     --color-text-primary: #1E293B; /* slate-800 */
     --color-text-secondary: #64748B; /* slate-500 */
+    
+    /* Mobile Navigation Spacing */
+    --mobile-nav-height: 88px; /* Actual height of mobile bottom navigation */
+    --mobile-safe-bottom: max(24px, env(safe-area-inset-bottom)); /* Account for safe areas */
+    --mobile-total-bottom: calc(var(--mobile-nav-height) + var(--mobile-safe-bottom));
   }
 
   * {
@@ -68,6 +73,24 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    /* Ensure proper mobile viewport handling */
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Ensure full viewport height handling */
+  html {
+    height: 100%;
+    /* Better mobile viewport handling */
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    min-height: 100vh;
+    /* Better mobile viewport handling */
+    min-height: -webkit-fill-available;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -113,9 +136,10 @@
     transform: scale(1.02);
   }
 
-  /* Mobile-First Utilities */
+  /* ENHANCED Mobile-First Utilities - CRITICAL FIXES */
   .touch-manipulation {
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   
   .safe-area-pb {
@@ -132,6 +156,73 @@
   
   .safe-area-pr {
     padding-right: env(safe-area-inset-right);
+  }
+
+  /* CRITICAL FIXES: Enhanced Mobile Bottom Spacing Utilities */
+  .pb-mobile-safe {
+    padding-bottom: var(--mobile-total-bottom);
+  }
+  
+  .mb-mobile-safe {
+    margin-bottom: var(--mobile-total-bottom);
+  }
+  
+  /* Container with proper mobile bottom spacing */
+  .mobile-container {
+    @apply lg:pb-6;
+    padding-bottom: var(--mobile-total-bottom);
+  }
+  
+  /* ENHANCED: Scrollable area with mobile considerations */
+  .mobile-scroll-container {
+    max-height: calc(100vh - 64px); /* Account for header */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    scroll-behavior: smooth;
+    /* CRITICAL: Better touch handling */
+    touch-action: pan-y;
+    /* CRITICAL: Prevent momentum scrolling issues */
+    -webkit-overflow-scrolling: touch;
+    /* CRITICAL: Smooth scrolling on all devices */
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.muted.DEFAULT') transparent;
+  }
+  
+  /* Full height mobile layout - IMPROVED */
+  .mobile-full-height {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh; /* Dynamic viewport height */
+  }
+  
+  /* CRITICAL: Enhanced mobile viewport fixes for better scrolling */
+  .mobile-viewport-fix {
+    /* Prevent bounce scrolling */
+    overscroll-behavior: none;
+    /* Better touch scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent horizontal scroll */
+    overflow-x: hidden;
+    /* CRITICAL: Ensure proper height calculation */
+    position: relative;
+    /* CRITICAL: Fix for iOS Safari viewport issues */
+    height: 100vh;
+    height: -webkit-fill-available;
+    height: 100dvh;
+  }
+
+  /* ENHANCED: High Contrast Support for Accessibility */
+  .contrast-more\:text-black {
+    color: #000000;
+  }
+  
+  .contrast-more\:text-gray-700 {
+    color: #374151;
+  }
+  
+  .contrast-more\:text-gray-600 {
+    color: #4B5563;
   }
 
   /* Accessibility Utilities */
@@ -232,6 +323,64 @@
     .animate-fade-in,
     .animate-scale-in {
       animation: none;
+    }
+  }
+  
+  /* CRITICAL: Enhanced mobile-specific responsive breakpoints */
+  @media (max-width: 1023px) {
+    /* Ensure all mobile pages have proper bottom spacing */
+    .min-h-screen {
+      padding-bottom: var(--mobile-total-bottom);
+    }
+    
+    /* ENHANCED: Fix scrollable areas on mobile */
+    .overflow-y-auto {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      scroll-behavior: smooth;
+    }
+    
+    /* CRITICAL: Ensure proper touch targets */
+    button, [role="button"], input, select, textarea {
+      min-height: 44px;
+      min-width: 44px;
+      touch-action: manipulation;
+    }
+    
+    /* CRITICAL: Better focus management on mobile */
+    :focus {
+      outline: 2px solid theme('colors.primary.DEFAULT');
+      outline-offset: 2px;
+    }
+  }
+  
+  /* ENHANCED: iOS Safari specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    .mobile-full-height {
+      min-height: -webkit-fill-available;
+      min-height: 100dvh;
+    }
+    
+    /* CRITICAL: Fix for iOS Safari viewport issues */
+    .mobile-viewport-fix {
+      position: relative;
+      overflow: hidden auto;
+      height: -webkit-fill-available;
+    }
+    
+    /* CRITICAL: Prevent iOS rubber band scrolling */
+    .mobile-scroll-container {
+      -webkit-overflow-scrolling: touch;
+      overflow: -moz-scrollbars-none;
+      -ms-overflow-style: none;
+    }
+  }
+  
+  /* CRITICAL: Android Chrome specific fixes */
+  @supports (display: -webkit-box) {
+    .mobile-viewport-fix {
+      height: 100vh;
+      height: 100dvh;
     }
   }
 }

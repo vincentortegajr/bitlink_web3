@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Icon from '../../components/AppIcon';
@@ -12,6 +11,8 @@ import GenerationSettings from './components/GenerationSettings';
 import GPUResourceMonitor from './components/GPUResourceMonitor';
 import GenerationHistory from './components/GenerationHistory';
 import GenerationPreview from './components/GenerationPreview';
+import Header from '../../components/ui/Header';
+
 
 const AITextToImageGenerator = () => {
   const navigate = useNavigate();
@@ -143,10 +144,10 @@ const AITextToImageGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="mobile-full-height mobile-viewport-fix bg-background">
       <Header />
       
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 mobile-container">
         {/* Page Header */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
@@ -161,7 +162,7 @@ const AITextToImageGenerator = () => {
         </div>
 
         {/* Desktop Layout */}
-        <div className="hidden lg:grid lg:grid-cols-12 gap-6">
+        <div className="hidden lg:grid lg:grid-cols-12 gap-6 pb-6">
           {/* Left Sidebar - Controls */}
           <div className="lg:col-span-4 space-y-6">
             {/* Prompt Input */}
@@ -240,7 +241,7 @@ const AITextToImageGenerator = () => {
           </div>
         </div>
 
-        {/* Mobile Layout */}
+        {/* Mobile Layout - FIXED SCROLLING */}
         <div className="lg:hidden">
           {/* Tab Navigation */}
           <div className="flex rounded-lg bg-muted p-1 mb-4">
@@ -265,100 +266,104 @@ const AITextToImageGenerator = () => {
             ))}
           </div>
 
-          {/* Tab Content */}
-          {activeTab === 'generate' && (
-            <div className="space-y-4">
-              {/* Preview */}
-              <GenerationPreview
-                isGenerating={isGenerating}
-                progress={progress}
-                estimatedTime={estimatedTime}
-                generatedImages={generatedImages}
-                onDownload={handleDownload}
-                onRegenerate={handleRegenerate}
-              />
-
-              {/* Prompt Input */}
-              <div className="bg-card rounded-lg p-4 border">
-                <textarea
-                  className={cn(
-                    "flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
-                    "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none mb-3"
-                  )}
-                  placeholder="Describe the image you want to create..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  disabled={isGenerating}
-                  rows={3}
+          {/* Tab Content - FIXED MOBILE SCROLLING */}
+          <div className="mobile-scroll-container">
+            {activeTab === 'generate' && (
+              <div className="space-y-4 pb-6">
+                {/* Preview */}
+                <GenerationPreview
+                  isGenerating={isGenerating}
+                  progress={progress}
+                  estimatedTime={estimatedTime}
+                  generatedImages={generatedImages}
+                  onDownload={handleDownload}
+                  onRegenerate={handleRegenerate}
                 />
-                
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowMobileSettings(!showMobileSettings)}
-                    iconName="Settings"
-                    iconPosition="left"
-                  >
-                    Settings
-                  </Button>
-                  <Button
-                    onClick={generateImage}
-                    disabled={!prompt.trim() || isGenerating}
-                    loading={isGenerating}
-                    iconName="Zap"
-                    iconPosition="left"
-                    className="flex-1"
-                  >
-                    Generate
-                  </Button>
-                </div>
-              </div>
 
-              {/* Prompt Enhancer */}
-              <div className="bg-card rounded-lg p-4 border">
-                <h3 className="font-semibold text-text-primary mb-3">Enhance Prompt</h3>
-                <PromptEnhancer
-                  onEnhance={handlePromptEnhance}
-                  loading={isGenerating}
-                />
-              </div>
-
-              {/* Mobile Settings */}
-              {showMobileSettings && (
+                {/* Prompt Input */}
                 <div className="bg-card rounded-lg p-4 border">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-text-primary">Settings</h3>
+                  <textarea
+                    className={cn(
+                      "flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
+                      "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none mb-3"
+                    )}
+                    placeholder="Describe the image you want to create..."
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    disabled={isGenerating}
+                    rows={3}
+                  />
+                  
+                  <div className="flex items-center gap-2">
                     <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setShowMobileSettings(false)}
-                      iconName="X"
-                    />
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowMobileSettings(!showMobileSettings)}
+                      iconName="Settings"
+                      iconPosition="left"
+                    >
+                      Settings
+                    </Button>
+                    <Button
+                      onClick={generateImage}
+                      disabled={!prompt.trim() || isGenerating}
+                      loading={isGenerating}
+                      iconName="Zap"
+                      iconPosition="left"
+                      className="flex-1"
+                    >
+                      Generate
+                    </Button>
                   </div>
-                  <GenerationSettings
-                    settings={settings}
-                    onSettingsChange={setSettings}
+                </div>
+
+                {/* Prompt Enhancer */}
+                <div className="bg-card rounded-lg p-4 border">
+                  <h3 className="font-semibold text-text-primary mb-3">Enhance Prompt</h3>
+                  <PromptEnhancer
+                    onEnhance={handlePromptEnhance}
                     loading={isGenerating}
                   />
                 </div>
-              )}
-            </div>
-          )}
 
-          {activeTab === 'history' && (
-            <div className="bg-card rounded-lg p-4 border">
-              <GenerationHistory
-                onPromptSelect={handlePromptSelect}
-                onImageRegenerate={handleImageRegenerate}
-              />
-            </div>
-          )}
+                {/* Mobile Settings */}
+                {showMobileSettings && (
+                  <div className="bg-card rounded-lg p-4 border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold text-text-primary">Settings</h3>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowMobileSettings(false)}
+                        iconName="X"
+                      />
+                    </div>
+                    <GenerationSettings
+                      settings={settings}
+                      onSettingsChange={setSettings}
+                      loading={isGenerating}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
-          {activeTab === 'monitor' && (
-            <GPUResourceMonitor isGenerating={isGenerating} />
-          )}
+            {activeTab === 'history' && (
+              <div className="bg-card rounded-lg p-4 border pb-6">
+                <GenerationHistory
+                  onPromptSelect={handlePromptSelect}
+                  onImageRegenerate={handleImageRegenerate}
+                />
+              </div>
+            )}
+
+            {activeTab === 'monitor' && (
+              <div className="pb-6">
+                <GPUResourceMonitor isGenerating={isGenerating} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

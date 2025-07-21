@@ -231,12 +231,23 @@ const UnifiedNavigation = () => {
     const handleClickOutside = (event) => {
       if (showAIStudio && !event.target.closest('[data-ai-studio-container]')) {
         setShowAIStudio(false);
+        
+        // CRITICAL FIX: Reset tab state when closing AI Studio
+        if (currentContext !== 'ai') {
+          const currentPath = location.pathname;
+          const web3Route = web3Navigation.find(nav => nav.route === currentPath);
+          if (web3Route) {
+            setActiveTab(web3Route.id);
+          } else {
+            setActiveTab('build');
+          }
+        }
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showAIStudio]);
+  }, [showAIStudio, currentContext, location.pathname, web3Navigation]);
 
   return (
     <>
@@ -297,39 +308,39 @@ const UnifiedNavigation = () => {
                 <Icon name="ChevronDown" size={14} className={cn("transition-transform duration-300", showAIStudio && "rotate-180")} />
               </Button>
 
-              {/* AI Tools Dropdown - FIXED TEXT CONTRAST */}
+              {/* AI Tools Dropdown - FIXED TEXT CONTRAST & MOBILE SCROLLING */}
               {showAIStudio && (
-                <div className="absolute top-full right-0 mt-2 w-80 bg-slate-800/95 backdrop-blur-xl border border-slate-600/50 rounded-2xl shadow-2xl overflow-hidden z-50">
-                  <div className="p-4 border-b border-slate-600/50 bg-gradient-to-r from-accent/10 to-primary/10">
-                    <h3 className="font-semibold text-white flex items-center gap-2">
+                <div className="absolute top-full right-0 mt-2 w-80 bg-surface/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-2xl overflow-hidden z-50">
+                  <div className="p-4 border-b border-border/50 bg-primary/10">
+                    <h3 className="font-semibold text-text-primary contrast-more:text-black flex items-center gap-2">
                       <Icon name="Sparkles" size={16} className="text-accent" />
                       AI Creative Studio
                     </h3>
-                    <p className="text-xs text-slate-300 mt-1">AI tools for content creation</p>
+                    <p className="text-xs text-text-secondary contrast-more:text-gray-700 mt-1">AI tools for content creation</p>
                   </div>
-                  <div className="p-2 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
+                  <div className="p-2 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent mobile-scroll-container">
                     <div className="space-y-1">
                       {aiTools.map((tool) => (
                         <button
                           key={tool.id}
                           onClick={() => handleNavigation(tool.route, 'ai')}
-                          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-700/50 transition-all duration-300 text-left group hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-800"
+                          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted/60 active:bg-muted/80 transition-all duration-300 text-left group hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface min-h-[56px] touch-manipulation"
                         >
                           <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r shrink-0", tool.gradient)}>
                             <Icon name={tool.icon} size={16} className="text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-white text-sm truncate">{tool.name}</span>
+                              <span className="font-medium text-text-primary contrast-more:text-black text-sm truncate">{tool.name}</span>
                               {tool.isNew && (
                                 <span className="px-1.5 py-0.5 bg-gradient-to-r from-accent to-primary text-white text-[10px] rounded-full font-medium shrink-0">
                                   NEW
                                 </span>
                               )}
                             </div>
-                            <p className="text-xs text-slate-300 truncate">{tool.description}</p>
+                            <p className="text-xs text-text-secondary contrast-more:text-gray-700 truncate">{tool.description}</p>
                           </div>
-                          <Icon name="ChevronRight" size={16} className="text-slate-400 group-hover:text-white transition-colors shrink-0" />
+                          <Icon name="ChevronRight" size={16} className="text-text-secondary group-hover:text-text-primary contrast-more:text-gray-600 transition-colors shrink-0" />
                         </button>
                       ))}
                     </div>
@@ -382,7 +393,7 @@ const UnifiedNavigation = () => {
         </div>
       </header>
 
-      {/* AI Studio Mobile Slide-Up Panel - FIXED TEXT CONTRAST */}
+      {/* AI Studio Mobile Slide-Up Panel - FIXED TEXT CONTRAST & SCROLLING */}
       {showAIStudio && (
         <div 
           className="lg:hidden fixed inset-0 bg-black/60 z-50 flex items-end backdrop-blur-sm"
@@ -392,56 +403,56 @@ const UnifiedNavigation = () => {
             }
           }}
         >
-          <div className="w-full bg-slate-800/95 backdrop-blur-xl rounded-t-3xl max-h-[80vh] overflow-hidden border-t border-slate-600/50" data-ai-studio-container>
-            <div className="p-4 border-b border-slate-600/50 bg-gradient-to-r from-accent/10 to-primary/10">
+          <div className="w-full bg-surface/98 backdrop-blur-xl rounded-t-3xl max-h-[85vh] overflow-hidden border-t border-border/60" data-ai-studio-container>
+            <div className="p-4 border-b border-border/50 bg-primary/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-accent to-primary rounded-lg flex items-center justify-center">
                     <Icon name="Sparkles" size={16} className="text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-white">AI Studio</h2>
-                    <p className="text-xs text-slate-300">AI tools for content creation</p>
+                    <h2 className="text-lg font-bold text-text-primary contrast-more:text-black">AI Studio</h2>
+                    <p className="text-xs text-text-secondary contrast-more:text-gray-700">AI tools for content creation</p>
                   </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowAIStudio(false)}
-                  className="min-h-[44px] min-w-[44px] hover:scale-105 transition-transform duration-300 touch-manipulation text-white hover:bg-slate-700/50"
+                  className="min-h-[44px] min-w-[44px] hover:scale-105 transition-transform duration-300 touch-manipulation text-text-primary hover:bg-muted/50"
                   iconName="X"
                 />
               </div>
             </div>
             
-            <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent" style={{ maxHeight: 'calc(80vh - 100px)' }}>
-              <div className="p-4 space-y-3">
+            <div className="overflow-y-auto mobile-scroll-container scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent" style={{ maxHeight: 'calc(85vh - 100px)' }}>
+              <div className="p-4 space-y-3 pb-safe-area">
                 {aiTools.map((tool) => (
                   <button
                     key={tool.id}
                     onClick={() => handleNavigation(tool.route, 'ai')}
-                    className="flex items-center gap-4 p-4 bg-slate-700/50 backdrop-blur-sm rounded-2xl border border-slate-600/50 hover:bg-slate-600/50 transition-all duration-300 text-left group hover:scale-[1.02] w-full touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-800"
+                    className="flex items-center gap-4 p-4 bg-card/60 backdrop-blur-sm rounded-2xl border border-border/60 hover:bg-muted/60 active:bg-muted/80 transition-all duration-300 text-left group hover:scale-[1.02] w-full touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface min-h-[72px]"
                   >
                     <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r shrink-0", tool.gradient)}>
                       <Icon name={tool.icon} size={20} className="text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-white truncate">{tool.name}</h3>
+                        <h3 className="font-semibold text-text-primary contrast-more:text-black truncate">{tool.name}</h3>
                         {tool.isNew && (
                           <span className="px-2 py-1 bg-gradient-to-r from-accent to-primary text-white text-xs rounded-full font-medium shrink-0">
                             NEW
                           </span>
                         )}
                       </div>
-                      <p className="text-slate-300 text-sm truncate">{tool.description}</p>
+                      <p className="text-text-secondary contrast-more:text-gray-700 text-sm truncate">{tool.description}</p>
                     </div>
-                    <Icon name="ChevronRight" size={16} className="text-slate-400 group-hover:text-white transition-colors shrink-0" />
+                    <Icon name="ChevronRight" size={16} className="text-text-secondary group-hover:text-text-primary contrast-more:text-gray-600 transition-colors shrink-0" />
                   </button>
                 ))}
               </div>
               {/* Add bottom padding for safe scrolling */}
-              <div className="h-4"></div>
+              <div className="h-6 safe-area-pb"></div>
             </div>
           </div>
         </div>

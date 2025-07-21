@@ -3,7 +3,8 @@ import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
 import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 import UnifiedNavigation from "components/ui/UnifiedNavigation";
-// Add your imports here
+
+// Import all pages
 import ProfileBuilderDashboard from "pages/profile-builder-dashboard";
 import LeadGenerationHub from "pages/lead-generation-hub";
 import LinkContentManagement from "pages/link-content-management";
@@ -15,6 +16,8 @@ import AIImageToVideoCreator from "pages/ai-image-to-video-creator";
 import AITextToAudioGenerator from "pages/ai-text-to-audio-generator";
 import AIVideoToLipsyncGenerator from "pages/ai-video-to-lipsync-generator";
 import AIImageUpscaler from "pages/ai-image-upscaler";
+import AIImageRealismModel from "pages/ai-image-realism-model";
+import AIChatAssistant from "pages/ai-chat-assistant";
 import NotFound from "pages/NotFound";
 
 const Routes = () => {
@@ -43,7 +46,8 @@ const Routes = () => {
             <Route path="/ai-video-to-lipsync-generator" element={<AIVideoToLipsyncGenerator />} />
             <Route path="/ai-text-to-audio-generator" element={<AITextToAudioGenerator />} />
             <Route path="/ai-image-upscaler" element={<AIImageUpscaler />} />
-            <Route path="/ai-image-realism-model" element={<AIImageRealism />} />
+            <Route path="/ai-image-realism-model" element={<AIImageRealismModel />} />
+            <Route path="/ai-chat-assistant" element={<AIChatAssistant />} />
             
             {/* 404 Handler */}
             <Route path="*" element={<NotFound />} />
@@ -51,33 +55,6 @@ const Routes = () => {
         </div>
       </ErrorBoundary>
     </BrowserRouter>
-  );
-};
-
-// Placeholder for new AI Image Realism tool
-const AIImageRealism = () => {
-  return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto max-w-4xl">
-        <div className="bg-card rounded-2xl border p-8 text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">✨</span>
-          </div>
-          <h1 className="text-2xl font-bold text-text-primary mb-2">
-            AI Image Realism Model
-          </h1>
-          <p className="text-text-secondary mb-6">
-            Transform cartoon skin into realistic AI human skin - Coming Soon
-          </p>
-          <div className="bg-muted/50 rounded-xl p-4">
-            <p className="text-sm text-text-secondary">
-              This advanced AI model specializes in converting cartoon or stylized faces into photorealistic human skin,
-              perfect for creating indistinguishable AI influencer content.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 };
 
