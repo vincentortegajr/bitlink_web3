@@ -76,7 +76,7 @@ const UnifiedNavigation = () => {
     },
     {
       id: 'image-to-image',
-      name: 'Image Transform',
+      name: 'Image-to-Image',
       description: 'Transform existing images',
       route: '/ai-image-to-image-transformer',
       icon: 'RefreshCw',
@@ -94,7 +94,7 @@ const UnifiedNavigation = () => {
     },
     {
       id: 'video-lipsync',
-      name: 'Video Lipsync',
+      name: 'Video-to-Lipsync',
       description: 'Sync lips to audio',
       route: '/ai-video-to-lipsync-generator',
       icon: 'Mic',
@@ -122,7 +122,7 @@ const UnifiedNavigation = () => {
     },
     {
       id: 'image-realism',
-      name: 'Image Realism',
+      name: 'Image Realism Model',
       description: 'Cartoon to realistic skin',
       route: '/ai-image-realism-model',
       icon: 'Sparkles',
@@ -156,6 +156,7 @@ const UnifiedNavigation = () => {
     if (web3Route) {
       setActiveTab(web3Route.id);
       setCurrentContext('web3');
+      setShowAIStudio(false); // Close AI Studio when navigating to Web3 routes
       return;
     }
 
@@ -163,26 +164,27 @@ const UnifiedNavigation = () => {
     const aiRoute = aiTools.find(tool => tool.route === currentPath);
     if (aiRoute) {
       setCurrentContext('ai');
+      setShowAIStudio(false); // Close AI Studio dropdown when navigating to AI route
       return;
     }
 
     // Default to build (Web3 LinkTree primary)
     setActiveTab('build');
     setCurrentContext('web3');
+    setShowAIStudio(false); // Ensure AI Studio is closed by default
   }, [location.pathname]);
 
   const handleNavigation = (route, context = 'web3') => {
     navigate(route);
     setCurrentContext(context);
-    if (context === 'ai') {
-      setShowAIStudio(false);
-    }
+    setShowAIStudio(false); // Always close AI Studio when navigating
   };
 
   const handleTabClick = (tabId) => {
     const navItem = web3Navigation.find(nav => nav.id === tabId);
     if (navItem) {
       setActiveTab(tabId);
+      setShowAIStudio(false); // Close AI Studio when clicking other nav items
       handleNavigation(navItem.route, 'web3');
     }
   };
@@ -204,13 +206,25 @@ const UnifiedNavigation = () => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
+  // Close AI Studio when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showAIStudio && !event.target.closest('[data-ai-studio-container]')) {
+        setShowAIStudio(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showAIStudio]);
+
   return (
     <>
       {/* Apple-Style Transparent Header */}
       <header className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out",
         isScrolled 
-          ? "bg-surface/80 backdrop-blur-xl border-b border-border/50 shadow-lg" 
+          ? "bg-surface/90 backdrop-blur-xl border-b border-border/50 shadow-lg" 
           : "bg-transparent"
       )}>
         <div className="flex h-16 items-center justify-between px-4 lg:px-6">
@@ -246,7 +260,7 @@ const UnifiedNavigation = () => {
             })}
             
             {/* AI Studio Access */}
-            <div className="relative">
+            <div className="relative" data-ai-studio-container>
               <Button
                 variant={currentContext === 'ai' ? 'default' : 'ghost'}
                 onClick={() => setShowAIStudio(!showAIStudio)}
@@ -254,14 +268,16 @@ const UnifiedNavigation = () => {
                 iconPosition="left"
                 className={cn(
                   "transition-all duration-300 hover:scale-105",
-                  currentContext === 'ai' && "bg-gradient-to-r from-accent to-primary text-white"
+                  currentContext === 'ai' && "bg-gradient-to-r from-accent to-primary text-white",
+                  showAIStudio && "bg-primary/10 text-primary border border-primary/20"
                 )}
+                data-ai-studio-trigger
               >
                 AI Studio
                 <Icon name="ChevronDown" size={14} className={cn("transition-transform duration-300", showAIStudio && "rotate-180")} />
               </Button>
 
-              {/* AI Tools Dropdown */}
+              {/* AI Tools Dropdown - FIXED VISIBILITY AND SCROLLING */}
               {showAIStudio && (
                 <div className="absolute top-full right-0 mt-2 w-80 bg-surface/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl overflow-hidden z-50">
                   <div className="p-4 border-b border-border/50 bg-gradient-to-r from-accent/5 to-primary/5">
@@ -271,29 +287,32 @@ const UnifiedNavigation = () => {
                     </h3>
                     <p className="text-xs text-text-secondary mt-1">AI tools for content creation</p>
                   </div>
-                  <div className="p-2 max-h-64 overflow-y-auto">
-                    {aiTools.map((tool) => (
-                      <button
-                        key={tool.id}
-                        onClick={() => handleNavigation(tool.route, 'ai')}
-                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted/50 transition-all duration-300 text-left group hover:scale-[1.02]"
-                      >
-                        <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r", tool.gradient)}>
-                          <Icon name={tool.icon} size={16} className="text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-text-primary text-sm">{tool.name}</span>
-                            {tool.isNew && (
-                              <span className="px-1.5 py-0.5 bg-gradient-to-r from-accent to-primary text-white text-[10px] rounded-full font-medium">
-                                NEW
-                              </span>
-                            )}
+                  <div className="p-2 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+                    <div className="space-y-1">
+                      {aiTools.map((tool) => (
+                        <button
+                          key={tool.id}
+                          onClick={() => handleNavigation(tool.route, 'ai')}
+                          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted/50 transition-all duration-300 text-left group hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        >
+                          <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r shrink-0", tool.gradient)}>
+                            <Icon name={tool.icon} size={16} className="text-white" />
                           </div>
-                          <p className="text-xs text-text-secondary">{tool.description}</p>
-                        </div>
-                      </button>
-                    ))}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-text-primary text-sm truncate">{tool.name}</span>
+                              {tool.isNew && (
+                                <span className="px-1.5 py-0.5 bg-gradient-to-r from-accent to-primary text-white text-[10px] rounded-full font-medium shrink-0">
+                                  NEW
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-text-secondary truncate">{tool.description}</p>
+                          </div>
+                          <Icon name="ChevronRight" size={16} className="text-text-secondary group-hover:text-text-primary transition-colors shrink-0" />
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -335,7 +354,7 @@ const UnifiedNavigation = () => {
               variant={isWalletConnected ? "outline" : "default"}
               size="icon"
               onClick={handleWalletConnect}
-              className="sm:hidden min-h-[44px] min-w-[44px] hover:scale-105 transition-transform duration-300"
+              className="sm:hidden min-h-[44px] min-w-[44px] hover:scale-105 transition-transform duration-300 touch-manipulation"
             >
               <Icon name={isWalletConnected ? "LogOut" : "Wallet"} size={16} />
             </Button>
@@ -343,10 +362,17 @@ const UnifiedNavigation = () => {
         </div>
       </header>
 
-      {/* AI Studio Mobile Slide-Up Panel */}
+      {/* AI Studio Mobile Slide-Up Panel - IMPROVED SCROLLING */}
       {showAIStudio && (
-        <div className="lg:hidden fixed inset-0 bg-black/60 z-50 flex items-end backdrop-blur-sm">
-          <div className="w-full bg-surface/95 backdrop-blur-xl rounded-t-3xl max-h-[75vh] overflow-hidden border-t border-border/50">
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/60 z-50 flex items-end backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowAIStudio(false);
+            }
+          }}
+        >
+          <div className="w-full bg-surface/95 backdrop-blur-xl rounded-t-3xl max-h-[80vh] overflow-hidden border-t border-border/50" data-ai-studio-container>
             <div className="p-4 border-b border-border/50 bg-gradient-to-r from-accent/5 to-primary/5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -362,38 +388,40 @@ const UnifiedNavigation = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowAIStudio(false)}
-                  className="min-h-[44px] min-w-[44px] hover:scale-105 transition-transform duration-300"
+                  className="min-h-[44px] min-w-[44px] hover:scale-105 transition-transform duration-300 touch-manipulation"
                   iconName="X"
                 />
               </div>
             </div>
             
-            <div className="overflow-y-auto">
-              <div className="p-4 grid grid-cols-1 gap-3">
+            <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent" style={{ maxHeight: 'calc(80vh - 100px)' }}>
+              <div className="p-4 space-y-3">
                 {aiTools.map((tool) => (
                   <button
                     key={tool.id}
                     onClick={() => handleNavigation(tool.route, 'ai')}
-                    className="flex items-center gap-4 p-4 bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 hover:bg-muted/50 transition-all duration-300 text-left group hover:scale-[1.02]"
+                    className="flex items-center gap-4 p-4 bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 hover:bg-muted/50 transition-all duration-300 text-left group hover:scale-[1.02] w-full touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   >
-                    <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r", tool.gradient)}>
+                    <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r shrink-0", tool.gradient)}>
                       <Icon name={tool.icon} size={20} className="text-white" />
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-text-primary">{tool.name}</h3>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold text-text-primary truncate">{tool.name}</h3>
                         {tool.isNew && (
-                          <span className="px-2 py-1 bg-gradient-to-r from-accent to-primary text-white text-xs rounded-full font-medium">
+                          <span className="px-2 py-1 bg-gradient-to-r from-accent to-primary text-white text-xs rounded-full font-medium shrink-0">
                             NEW
                           </span>
                         )}
                       </div>
-                      <p className="text-text-secondary text-sm">{tool.description}</p>
+                      <p className="text-text-secondary text-sm truncate">{tool.description}</p>
                     </div>
-                    <Icon name="ChevronRight" size={16} className="text-text-secondary group-hover:text-text-primary transition-colors" />
+                    <Icon name="ChevronRight" size={16} className="text-text-secondary group-hover:text-text-primary transition-colors shrink-0" />
                   </button>
                 ))}
               </div>
+              {/* Add bottom padding for safe scrolling */}
+              <div className="h-4"></div>
             </div>
           </div>
         </div>
@@ -410,7 +438,7 @@ const UnifiedNavigation = () => {
                   key={nav.id}
                   onClick={() => handleTabClick(nav.id)}
                   className={cn(
-                    "flex flex-col items-center justify-center px-2 py-2 rounded-2xl text-xs font-medium transition-all duration-300 min-w-[44px] min-h-[44px] touch-manipulation hover:scale-110",
+                    "flex flex-col items-center justify-center px-2 py-2 rounded-2xl text-xs font-medium transition-all duration-300 min-w-[44px] min-h-[44px] touch-manipulation hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
                     isActive
                       ? "text-primary bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-sm" 
                       : "text-text-secondary hover:text-text-primary hover:bg-muted/30"
@@ -437,11 +465,12 @@ const UnifiedNavigation = () => {
             <button
               onClick={() => setShowAIStudio(true)}
               className={cn(
-                "flex flex-col items-center justify-center px-2 py-2 rounded-2xl text-xs font-medium transition-all duration-300 min-w-[44px] min-h-[44px] touch-manipulation hover:scale-110",
+                "flex flex-col items-center justify-center px-2 py-2 rounded-2xl text-xs font-medium transition-all duration-300 min-w-[44px] min-h-[44px] touch-manipulation hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
                 currentContext === 'ai'
                   ? "text-accent bg-accent/10 border border-accent/20 shadow-lg backdrop-blur-sm" 
                   : "text-text-secondary hover:text-text-primary hover:bg-muted/30"
               )}
+              data-ai-studio-trigger
             >
               <div className={cn(
                 "w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-300",

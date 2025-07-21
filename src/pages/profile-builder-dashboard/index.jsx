@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../../components/ui/Button';
-
-
 import Icon from '../../components/AppIcon';
 import Header from '../../components/ui/Header';
 import TopToolbar from './components/TopToolbar';
@@ -10,15 +8,6 @@ import ProfilePreview from './components/ProfilePreview';
 import PropertyPanel from './components/PropertyPanel';
 import QuickActions from './components/QuickActions';
 import { useNavigate } from 'react-router-dom';
-
-
-
-
-
-
-
-
-
 
 const ProfileBuilderDashboard = () => {
   const navigate = useNavigate();
@@ -161,15 +150,26 @@ const ProfileBuilderDashboard = () => {
     setComponents(prev => [...prev, newComponent]);
   };
 
+  const handleOpenAIStudio = () => {
+    const aiStudioTrigger = document.querySelector('[data-ai-studio-trigger]');
+    if (aiStudioTrigger) {
+      aiStudioTrigger.click();
+    }
+  };
+
+  const handleAddLink = () => {
+    setShowQuickActions(true);
+  };
+
   return (
-    <div className="min-h-screen bg-background pb-6 lg:pb-0">
+    <div className="min-h-screen bg-background pb-24 lg:pb-6">
       {/* NAVIGATION INTEGRATION - Easy AI Studio Access */}
       <div className="container mx-auto px-4 py-6">
         {/* Quick AI Tools Access Banner */}
         <div className="mb-6 bg-gradient-to-r from-accent/10 to-primary/10 rounded-2xl p-4 border border-accent/20">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-accent to-primary rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-accent to-primary rounded-xl flex items-center justify-center shrink-0">
                 <Icon name="Sparkles" size={20} className="text-white" />
               </div>
               <div>
@@ -182,11 +182,8 @@ const ProfileBuilderDashboard = () => {
               size="sm"
               iconName="ArrowRight"
               iconPosition="right"
-              className="hover:scale-105 transition-transform duration-300"
-              onClick={() => {
-                // This will be handled by the unified navigation
-                document.querySelector('[data-ai-studio-trigger]')?.click();
-              }}
+              className="hover:scale-105 transition-transform duration-300 touch-manipulation min-h-[44px] w-full sm:w-auto"
+              onClick={handleOpenAIStudio}
             >
               Open AI Studio
             </Button>
@@ -218,31 +215,33 @@ const ProfileBuilderDashboard = () => {
           <div className="flex-1 p-4 lg:p-6 overflow-y-auto bg-muted/30">
             <div className="max-w-4xl mx-auto pb-24 md:pb-6">
               <div className="mb-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
                     <h1 className="text-2xl font-bold text-text-primary">Profile Builder</h1>
                     <p className="text-text-secondary">Create your Web3 profile page</p>
                   </div>
                   
-                  {/* Mobile Action Buttons - IMPROVED ACCESSIBILITY */}
-                  <div className="lg:hidden flex items-center space-x-2">
+                  {/* Mobile Action Buttons - IMPROVED ACCESSIBILITY & FUNCTIONALITY */}
+                  <div className="lg:hidden flex items-center space-x-2 w-full sm:w-auto">
                     <Button
                       variant="outline"
-                      size="icon"
+                      size="sm"
                       onClick={() => setShowComponentLibrary(true)}
-                      className="min-h-[44px] min-w-[44px] touch-manipulation"
-                      aria-label="Open component library"
+                      className="flex-1 sm:flex-none min-h-[44px] touch-manipulation"
+                      iconName="Layers"
+                      iconPosition="left"
                     >
-                      <Icon name="Layers" size={16} />
+                      Components
                     </Button>
                     <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setShowQuickActions(true)}
-                      className="min-h-[44px] min-w-[44px] touch-manipulation"
-                      aria-label="Open quick actions"
+                      variant="default"
+                      size="sm"
+                      onClick={handleAddLink}
+                      className="flex-1 sm:flex-none min-h-[44px] touch-manipulation"
+                      iconName="Plus"
+                      iconPosition="left"
                     >
-                      <Icon name="Plus" size={16} />
+                      Add Link
                     </Button>
                   </div>
                 </div>
