@@ -515,9 +515,16 @@ const UnifiedNavigation = () => {
         </div>
       )}
 
-      {/* CRITICAL FIX: Unified Mobile Bottom Navigation - Enhanced state management */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-xl border-t border-border/50 z-50 shadow-2xl">
-        <div className="safe-area-pb">
+      {/* CRITICAL FIX: Enhanced Mobile Bottom Navigation - Fixed positioning for scrolling */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface/98 backdrop-blur-xl border-t border-border/50 z-50 shadow-2xl">
+        {/* CRITICAL FIX: Enhanced safe area handling to prevent disconnection */}
+        <div className="safe-area-pb" style={{
+          paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+          background: 'var(--color-surface)',
+          position: 'sticky',
+          bottom: 0,
+          zIndex: 51
+        }}>
           <div className="flex items-center justify-around px-2 py-3">
             {web3Navigation.slice(0, 4).map((nav) => {
               const isActive = activeTab === nav.id && currentContext === 'web3';

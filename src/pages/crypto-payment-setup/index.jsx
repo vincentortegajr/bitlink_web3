@@ -194,26 +194,29 @@ const CryptoPaymentSetup = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="mobile-full-height mobile-viewport-fix bg-background">
       <Header />
-      <QuickActionToolbar />
+      {/* OPTIMIZED: Move QuickActionToolbar to save vertical space on mobile */}
+      <div className="hidden lg:block">
+        <QuickActionToolbar />
+      </div>
       
-      <main className="container mx-auto px-4 lg:px-6 py-8">
+      <main className="container mx-auto px-4 lg:px-6 py-4 lg:py-8 pb-mobile-safe">
         <NavigationBreadcrumbs customBreadcrumbs={breadcrumbs} />
         
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-text-primary mb-2">
+          {/* OPTIMIZED: Compact header for mobile */}
+          <div className="text-center mb-6 lg:mb-8">
+            <h1 className="text-2xl lg:text-3xl font-bold text-text-primary mb-2">
               Crypto Payment Setup
             </h1>
-            <p className="text-lg text-text-secondary">
+            <p className="text-base lg:text-lg text-text-secondary">
               Configure your Web3 payment system in just a few steps
             </p>
           </div>
 
-          {/* Progress Indicator */}
-          <div className="mb-8">
+          {/* OPTIMIZED: Compact progress indicator */}
+          <div className="mb-6 lg:mb-8">
             <StepProgress 
               currentStep={currentStep}
               totalSteps={steps.length}
@@ -221,8 +224,8 @@ const CryptoPaymentSetup = () => {
             />
           </div>
 
-          {/* Step Content */}
-          <div className="bg-card border border-border rounded-lg p-6 lg:p-8 mb-8">
+          {/* OPTIMIZED: Main content with better mobile spacing */}
+          <div className="bg-card border border-border rounded-lg p-4 lg:p-6 lg:p-8 mb-6 lg:mb-8">
             <WalletConnectionStep
               onNext={handleNext}
               isActive={currentStep === 0}
@@ -253,21 +256,23 @@ const CryptoPaymentSetup = () => {
             />
           </div>
 
-          {/* Help Section */}
-          <div className="bg-muted rounded-lg p-6">
+          {/* OPTIMIZED: Compact help section */}
+          <div className="bg-muted rounded-lg p-4 lg:p-6">
             <div className="flex items-start space-x-4">
-              <Icon name="HelpCircle" size={24} className="text-primary mt-1" />
-              <div>
-                <h3 className="text-lg font-medium text-text-primary mb-2">Need Help?</h3>
+              <Icon name="HelpCircle" size={20} className="text-primary mt-1 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base lg:text-lg font-medium text-text-primary mb-2">Need Help?</h3>
                 <p className="text-sm text-text-secondary mb-4">
                   Setting up crypto payments can be complex. Our support team is here to help you every step of the way.
                 </p>
-                <div className="flex flex-wrap gap-3">
+                {/* OPTIMIZED: Better button layout for mobile */}
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <Button
                     variant="outline"
                     size="sm"
                     iconName="Book"
                     iconPosition="left"
+                    className="justify-center sm:justify-start"
                   >
                     Documentation
                   </Button>
@@ -276,6 +281,7 @@ const CryptoPaymentSetup = () => {
                     size="sm"
                     iconName="MessageCircle"
                     iconPosition="left"
+                    className="justify-center sm:justify-start"
                   >
                     Live Chat
                   </Button>
@@ -284,6 +290,7 @@ const CryptoPaymentSetup = () => {
                     size="sm"
                     iconName="Mail"
                     iconPosition="left"
+                    className="justify-center sm:justify-start"
                   >
                     Email Support
                   </Button>

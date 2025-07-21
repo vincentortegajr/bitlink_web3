@@ -356,36 +356,43 @@ const LeadGenerationHub = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="mobile-full-height mobile-viewport-fix bg-background">
       <Header />
-      <QuickActionToolbar />
+      <div className="hidden lg:block">
+        <QuickActionToolbar />
+      </div>
       
-      <div className="px-4 lg:px-6 py-6">
+      <div className="px-4 lg:px-6 py-4 lg:py-6 pb-mobile-safe">
         <NavigationBreadcrumbs />
         
-        {/* Page Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-text-primary">Lead Generation Hub</h1>
-            <p className="text-text-secondary mt-2">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 lg:mb-8 gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl lg:text-3xl font-bold text-text-primary">Lead Generation Hub</h1>
+            <p className="text-text-secondary mt-1 lg:mt-2">
               Manage your lead capture forms, email lists, and conversion analytics
             </p>
           </div>
           
-          <div className="flex items-center space-x-3">
-            <NotificationCenter />
+          <div className="flex items-center justify-between lg:justify-end gap-3">
+            <div className="lg:hidden flex-1">
+              <NotificationCenter />
+            </div>
+            <div className="hidden lg:block">
+              <NotificationCenter />
+            </div>
             <Button
               onClick={handleCreateForm}
               iconName="Plus"
               iconPosition="left"
+              className="flex-shrink-0"
             >
-              Create Form
+              <span className="hidden sm:inline">Create Form</span>
+              <span className="sm:hidden">Create</span>
             </Button>
           </div>
         </div>
 
-        {/* Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-6 lg:mb-8">
           {metricsData.map((metric, index) => (
             <MetricsCard
               key={index}
@@ -399,14 +406,12 @@ const LeadGenerationHub = () => {
           ))}
         </div>
 
-        {/* Main Content */}
         <div className="bg-surface border border-border rounded-lg shadow-subtle">
-          {/* Tabs */}
           <div className="border-b border-border">
-            <div className="flex space-x-8 px-6">
+            <div className="flex space-x-4 lg:space-x-8 px-4 lg:px-6 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('forms')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-smooth ${
+                className={`py-3 lg:py-4 px-1 border-b-2 font-medium text-sm transition-smooth whitespace-nowrap ${
                   activeTab === 'forms'
                     ? 'border-primary text-primary' :'border-transparent text-text-secondary hover:text-text-primary hover:border-border'
                 }`}
@@ -419,35 +424,34 @@ const LeadGenerationHub = () => {
               
               <button
                 onClick={() => setActiveTab('lists')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-smooth ${
+                className={`py-3 lg:py-4 px-1 border-b-2 font-medium text-sm transition-smooth whitespace-nowrap ${
                   activeTab === 'lists' ?'border-primary text-primary' :'border-transparent text-text-secondary hover:text-text-primary hover:border-border'
                 }`}
               >
                 <div className="flex items-center space-x-2">
                   <Icon name="Users" size={16} />
-                  <span>Email Lists ({emailLists.length})</span>
+                  <span>Lists ({emailLists.length})</span>
                 </div>
               </button>
               
               <button
                 onClick={() => setActiveTab('analytics')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-smooth ${
+                className={`py-3 lg:py-4 px-1 border-b-2 font-medium text-sm transition-smooth whitespace-nowrap ${
                   activeTab === 'analytics' ?'border-primary text-primary' :'border-transparent text-text-secondary hover:text-text-primary hover:border-border'
                 }`}
               >
                 <div className="flex items-center space-x-2">
                   <Icon name="BarChart3" size={16} />
-                  <span>Analytics</span>
+                  <span className="hidden sm:inline">Analytics</span>
+                  <span className="sm:hidden">Stats</span>
                 </div>
               </button>
             </div>
           </div>
 
-          {/* Tab Content */}
-          <div className="p-6">
-            {/* Search Bar */}
+          <div className="p-4 lg:p-6">
             {(activeTab === 'forms' || activeTab === 'lists') && (
-              <div className="mb-6">
+              <div className="mb-4 lg:mb-6">
                 <div className="max-w-md">
                   <Input
                     placeholder={`Search ${activeTab}...`}
@@ -459,16 +463,15 @@ const LeadGenerationHub = () => {
               </div>
             )}
 
-            {/* Forms Tab */}
             {activeTab === 'forms' && (
               <div>
                 {filteredForms.length === 0 ? (
-                  <div className="text-center py-12">
+                  <div className="text-center py-8 lg:py-12">
                     <Icon name="FileText" size={48} className="mx-auto text-muted-foreground mb-4" />
                     <h3 className="text-lg font-semibold text-text-primary mb-2">
                       {searchTerm ? 'No forms found' : 'No forms created yet'}
                     </h3>
-                    <p className="text-text-secondary mb-6">
+                    <p className="text-text-secondary mb-4 lg:mb-6">
                       {searchTerm 
                         ? 'Try adjusting your search terms' :'Create your first lead capture form to start collecting subscribers'
                       }
@@ -480,7 +483,7 @@ const LeadGenerationHub = () => {
                     )}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                     {filteredForms.map((form) => (
                       <FormCard
                         key={form.id}
@@ -496,23 +499,22 @@ const LeadGenerationHub = () => {
               </div>
             )}
 
-            {/* Email Lists Tab */}
             {activeTab === 'lists' && (
               <div>
                 {filteredLists.length === 0 ? (
-                  <div className="text-center py-12">
+                  <div className="text-center py-8 lg:py-12">
                     <Icon name="Users" size={48} className="mx-auto text-muted-foreground mb-4" />
                     <h3 className="text-lg font-semibold text-text-primary mb-2">
                       {searchTerm ? 'No lists found' : 'No email lists yet'}
                     </h3>
-                    <p className="text-text-secondary mb-6">
+                    <p className="text-text-secondary mb-4 lg:mb-6">
                       {searchTerm 
                         ? 'Try adjusting your search terms' :'Email lists will appear here as you collect subscribers through your forms'
                       }
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                     {filteredLists.map((list) => (
                       <EmailListCard
                         key={list.id}
@@ -528,11 +530,9 @@ const LeadGenerationHub = () => {
               </div>
             )}
 
-            {/* Analytics Tab */}
             {activeTab === 'analytics' && (
-              <div className="space-y-8">
-                {/* Key Metrics Row */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-6 lg:space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                   <AnalyticsChart
                     type="line"
                     data={analyticsData.monthlyLeads}
@@ -547,8 +547,7 @@ const LeadGenerationHub = () => {
                   />
                 </div>
 
-                {/* Traffic Sources */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                   <AnalyticsChart
                     type="pie"
                     data={analyticsData.trafficSources}
@@ -556,41 +555,40 @@ const LeadGenerationHub = () => {
                     height={300}
                   />
                   
-                  {/* Performance Summary */}
-                  <div className="bg-surface border border-border rounded-lg p-6">
+                  <div className="bg-surface border border-border rounded-lg p-4 lg:p-6">
                     <h3 className="text-lg font-semibold text-text-primary mb-4">Performance Summary</h3>
-                    <div className="space-y-4">
+                    <div className="space-y-3 lg:space-y-4">
                       <div className="flex items-center justify-between p-3 bg-muted/50 rounded-md">
                         <div className="flex items-center space-x-3">
                           <Icon name="TrendingUp" size={20} className="text-success" />
                           <div>
-                            <p className="font-medium text-text-primary">Best Performing Form</p>
-                            <p className="text-sm text-text-secondary">Free DeFi Guide Download</p>
+                            <p className="font-medium text-text-primary text-sm lg:text-base">Best Performing Form</p>
+                            <p className="text-xs lg:text-sm text-text-secondary">Free DeFi Guide Download</p>
                           </div>
                         </div>
-                        <span className="text-lg font-bold text-success">17.5%</span>
+                        <span className="text-base lg:text-lg font-bold text-success">17.5%</span>
                       </div>
                       
                       <div className="flex items-center justify-between p-3 bg-muted/50 rounded-md">
                         <div className="flex items-center space-x-3">
                           <Icon name="Users" size={20} className="text-primary" />
                           <div>
-                            <p className="font-medium text-text-primary">Most Engaged List</p>
-                            <p className="text-sm text-text-secondary">DeFi Enthusiasts</p>
+                            <p className="font-medium text-text-primary text-sm lg:text-base">Most Engaged List</p>
+                            <p className="text-xs lg:text-sm text-text-secondary">DeFi Enthusiasts</p>
                           </div>
                         </div>
-                        <span className="text-lg font-bold text-primary">31.2%</span>
+                        <span className="text-base lg:text-lg font-bold text-primary">31.2%</span>
                       </div>
                       
                       <div className="flex items-center justify-between p-3 bg-muted/50 rounded-md">
                         <div className="flex items-center space-x-3">
                           <Icon name="Calendar" size={20} className="text-accent" />
                           <div>
-                            <p className="font-medium text-text-primary">This Month's Growth</p>
-                            <p className="text-sm text-text-secondary">New subscribers added</p>
+                            <p className="font-medium text-text-primary text-sm lg:text-base">This Month's Growth</p>
+                            <p className="text-xs lg:text-sm text-text-secondary">New subscribers added</p>
                           </div>
                         </div>
-                        <span className="text-lg font-bold text-accent">+486</span>
+                        <span className="text-base lg:text-lg font-bold text-accent">+486</span>
                       </div>
                     </div>
                   </div>
@@ -601,7 +599,6 @@ const LeadGenerationHub = () => {
         </div>
       </div>
 
-      {/* Form Builder Modal */}
       <FormBuilder
         isOpen={isFormBuilderOpen}
         onClose={() => setIsFormBuilderOpen(false)}
@@ -609,7 +606,6 @@ const LeadGenerationHub = () => {
         editingForm={editingForm}
       />
 
-      {/* Contact Modal */}
       {selectedList && (
         <LeadContactModal
           isOpen={isContactModalOpen}

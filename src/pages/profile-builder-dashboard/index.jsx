@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../../components/ui/Button';
-import Icon from '../../components/AppIcon';
+
 import Header from '../../components/ui/Header';
 import TopToolbar from './components/TopToolbar';
 import ComponentLibrary from './components/ComponentLibrary';
@@ -166,35 +166,6 @@ const ProfileBuilderDashboard = () => {
       <div className="h-full flex flex-col">
         <div className="flex-1 overflow-hidden">
           <div className="container mx-auto px-4 py-6 h-full flex flex-col">
-            <div className="mb-6 bg-gradient-to-r from-accent/10 to-primary/10 rounded-2xl p-4 border border-accent/20 shrink-0">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-accent to-primary rounded-xl flex items-center justify-center shrink-0">
-                    <Icon name="Sparkles" size={20} className="text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-text-primary contrast-more:text-black contrast-more:font-bold">
-                      Enhance with AI Tools
-                    </h3>
-                    <p className="text-sm text-text-secondary contrast-more:text-gray-700 contrast-more:font-medium">
-                      Create content to drive traffic to your profile
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  iconName="ArrowRight"
-                  iconPosition="right"
-                  className="hover:scale-105 transition-transform duration-300 touch-manipulation min-h-[44px] w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                  onClick={handleOpenAIStudio}
-                  aria-label="Open AI Studio to enhance profile with AI-generated content"
-                >
-                  Open AI Studio
-                </Button>
-              </div>
-            </div>
-
             <Header />
             
             <div className="shrink-0">
