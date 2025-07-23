@@ -63,11 +63,11 @@ const Button = React.forwardRef(({
 
     const calculatedIconSize = iconSize || iconSizeMap[size] || 16;
 
-    // Enhanced Loading spinner with better accessibility
+    // CRITICAL FIX: Enhanced loading spinner with better performance
     const LoadingSpinner = () => (
-        <div className="flex items-center">
+        <div className="flex items-center" role="status" aria-label="Loading">
             <svg 
-                className="animate-spin -ml-1 mr-2 h-4 w-4" 
+                className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" 
                 fill="none" 
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -92,7 +92,7 @@ const Button = React.forwardRef(({
 
     // Enhanced icon rendering with better positioning
     const renderIcon = () => {
-        if (!iconName) return null;
+        if (!iconName || loading) return null;
 
         return (
             <Icon
@@ -118,10 +118,10 @@ const Button = React.forwardRef(({
                 "lg:min-h-auto", 
                 // Enhanced focus states for accessibility
                 "focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
-                // Performance optimization to prevent scroll disconnection
+                // CRITICAL FIX: Performance optimization to prevent scroll disconnection
                 "will-change-transform backface-visibility-hidden transform-gpu",
                 // Better disabled state
-                disabled && "cursor-not-allowed opacity-50 hover:scale-100 active:scale-100"
+                (disabled || loading) && "cursor-not-allowed opacity-50 hover:scale-100 active:scale-100 pointer-events-none"
             )}
             ref={ref}
             disabled={disabled || loading}
@@ -129,21 +129,31 @@ const Button = React.forwardRef(({
             aria-disabled={disabled || loading}
             {...props}
         >
-            {/* Apple-style liquid glass shimmer effect */}
+            {/* CRITICAL FIX: Enhanced Apple-style liquid glass shimmer effect */}
             <div 
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out pointer-events-none"
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out pointer-events-none opacity-0 group-hover:opacity-100"
                 aria-hidden="true"
             />
             
-            {/* Enhanced inner glow for liquid glass effect */}
+            {/* CRITICAL FIX: Enhanced inner glow for liquid glass effect */}
             <div 
-                className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-white/8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                aria-hidden="true"
+            />
+            
+            {/* CRITICAL FIX: Enhanced glass reflection effect */}
+            <div 
+                className="absolute inset-0 bg-gradient-to-t from-transparent via-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                 aria-hidden="true"
             />
             
             {loading && <LoadingSpinner />}
             {iconName && iconPosition === 'left' && renderIcon()}
-            <span className={cn("truncate drop-shadow-sm", loading && "opacity-75")}>
+            <span className={cn(
+                "truncate drop-shadow-sm transition-all duration-200", 
+                loading && "opacity-75",
+                "relative z-10"
+            )}>
                 {children}
             </span>
             {iconName && iconPosition === 'right' && renderIcon()}

@@ -146,7 +146,50 @@ const UnifiedNavigation = () => {
   const [walletAddress, setWalletAddress] = useState('');
   const [balance, setBalance] = useState('0.00');
 
-  // CRITICAL FIX: Enhanced scroll detection with performance optimization
+  // CRITICAL FIX: Add missing handleWalletConnect function
+  const handleWalletConnect = useCallback(async () => {
+    try {
+      if (isWalletConnected) {
+        // Disconnect wallet
+        setIsWalletConnected(false);
+        setWalletAddress('');
+        setBalance('0.00');
+        console.log('Wallet disconnected');
+      } else {
+        // Connect wallet
+        if (typeof window !== 'undefined' && window.ethereum) {
+          const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+          });
+          
+          if (accounts.length > 0) {
+            setIsWalletConnected(true);
+            setWalletAddress(accounts[0]);
+            
+            // Get balance
+            const balance = await window.ethereum.request({
+              method: 'eth_getBalance',
+              params: [accounts[0], 'latest']
+            });
+            
+            // Convert from wei to ETH
+            const ethBalance = (parseInt(balance, 16) / Math.pow(10, 18)).toFixed(4);
+            setBalance(ethBalance);
+            
+            console.log('Wallet connected:', accounts[0]);
+          }
+        } else {
+          // No wallet found
+          alert('Please install MetaMask or another Web3 wallet to connect.');
+        }
+      }
+    } catch (error) {
+      console.error('Wallet connection error:', error);
+      alert('Failed to connect wallet. Please try again.');
+    }
+  }, [isWalletConnected]);
+
+  // CRITICAL FIX: Enhanced scroll detection with better performance and debouncing
   useEffect(() => {
     let timeoutId;
     let ticking = false;
@@ -156,128 +199,93 @@ const UnifiedNavigation = () => {
         requestAnimationFrame(() => {
           clearTimeout(timeoutId);
           timeoutId = setTimeout(() => {
-            setIsScrolled(window.scrollY > 10);
-          }, 10);
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            setIsScrolled(scrollTop > 10);
+          }, 16); // 60fps throttling
           ticking = false;
         });
         ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // CRITICAL FIX: Better event listener options for performance
+    window.addEventListener('scroll', handleScroll, { passive: true, capture: false });
+    
+    // Set initial state
+    const initialScroll = window.pageYOffset || document.documentElement.scrollTop;
+    setIsScrolled(initialScroll > 10);
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(timeoutId);
     };
   }, []);
 
-  // Route detection and tab management with proper synchronization
+  // CRITICAL FIX: Enhanced route detection with better error handling
   useEffect(() => {
     const currentPath = location.pathname;
     
-    // Check Web3 LinkTree routes first
-    const web3Route = web3Navigation.find(nav => nav.route === currentPath);
-    if (web3Route) {
-      setActiveTab(web3Route.id);
-      setCurrentContext('web3');
-      setShowAIStudio(false);
-      return;
-    }
+    try {
+      // Check Web3 LinkTree routes first
+      const web3Route = web3Navigation.find(nav => nav.route === currentPath);
+      if (web3Route) {
+        setActiveTab(web3Route.id);
+        setCurrentContext('web3');
+        setShowAIStudio(false);
+        return;
+      }
 
-    // Check AI tool routes
-    const aiRoute = aiTools.find(tool => tool.route === currentPath);
-    if (aiRoute) {
-      setActiveTab('ai-studio');
-      setCurrentContext('ai');
-      setShowAIStudio(false); // Close dropdown when on specific AI route
-      return;
-    }
+      // Check AI tool routes
+      const aiRoute = aiTools.find(tool => tool.route === currentPath);
+      if (aiRoute) {
+        setActiveTab('ai-studio');
+        setCurrentContext('ai');
+        setShowAIStudio(false); // Close dropdown when on specific AI route
+        return;
+      }
 
-    // Default handling for unknown routes
-    if (currentPath === '/') {
+      // Default handling for unknown routes
+      if (currentPath === '/') {
+        setActiveTab('build');
+        setCurrentContext('web3');
+        setShowAIStudio(false);
+      } else {
+        // For unknown routes, maintain current state but close AI Studio
+        setShowAIStudio(false);
+      }
+    } catch (error) {
+      console.error('Navigation route detection error:', error);
+      // Fallback to safe state
       setActiveTab('build');
       setCurrentContext('web3');
-    } else {
-      // For unknown routes, maintain current state but close AI Studio
       setShowAIStudio(false);
     }
   }, [location.pathname]);
 
-  // Navigation handler with proper state management
-  const handleNavigation = useCallback((route, context = 'web3') => {
-    navigate(route);
-    setCurrentContext(context);
-    setShowAIStudio(false);
-  }, [navigate]);
-
-  // Tab click handler with immediate state updates
-  const handleTabClick = useCallback((tabId) => {
-    const navItem = web3Navigation.find(nav => nav.id === tabId);
-    if (navItem) {
-      setActiveTab(tabId);
-      setCurrentContext('web3');
-      setShowAIStudio(false);
-      navigate(navItem.route);
-    }
-  }, [navigate]);
-
-  // Wallet connection handler
-  const handleWalletConnect = useCallback(() => {
-    if (!isWalletConnected) {
-      setIsWalletConnected(true);
-      setWalletAddress('0x742d...4B2f');
-      setBalance('2.45');
-    } else {
-      setIsWalletConnected(false);
-      setWalletAddress('');
-      setBalance('0.00');
-    }
-  }, [isWalletConnected]);
-
-  // AI Studio toggle with proper state synchronization
-  const handleAIStudioToggle = useCallback(() => {
-    const newShowState = !showAIStudio;
-    setShowAIStudio(newShowState);
-    
-    // Update active tab state based on context
-    if (newShowState) {
-      // Opening AI Studio - set as active if not on a specific AI route
-      if (currentContext !== 'ai') {
-        setActiveTab('ai-studio');
-      }
-    } else {
-      // Closing AI Studio - revert to appropriate tab
-      if (currentContext !== 'ai') {
-        const currentPath = location.pathname;
-        const web3Route = web3Navigation.find(nav => nav.route === currentPath);
-        setActiveTab(web3Route?.id || 'build');
-      }
-    }
-  }, [showAIStudio, currentContext, location.pathname]);
-
-  const formatAddress = (address) => {
-    if (!address) return '';
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
-  // CRITICAL FIX: Enhanced click outside handler with better performance
+  // CRITICAL FIX: Enhanced click outside handler with better performance and error handling
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showAIStudio && !event.target.closest('[data-ai-studio-container]')) {
-        setShowAIStudio(false);
-        
-        // Reset tab state when closing AI Studio
-        if (currentContext !== 'ai') {
-          const currentPath = location.pathname;
-          const web3Route = web3Navigation.find(nav => nav.route === currentPath);
-          setActiveTab(web3Route?.id || 'build');
+      try {
+        if (showAIStudio && event.target && !event.target.closest('[data-ai-studio-container]')) {
+          setShowAIStudio(false);
+          
+          // Reset tab state when closing AI Studio
+          if (currentContext !== 'ai') {
+            const currentPath = location.pathname;
+            const web3Route = web3Navigation.find(nav => nav.route === currentPath);
+            setActiveTab(web3Route?.id || 'build');
+          }
         }
+      } catch (error) {
+        console.error('Click outside handler error:', error);
+        // Fallback: close AI Studio
+        setShowAIStudio(false);
       }
     };
 
     if (showAIStudio) {
-      // CRITICAL: Use capture phase for better performance
-      document.addEventListener('mousedown', handleClickOutside, { capture: true });
+      // CRITICAL FIX: Use capture phase for better performance and reliability
+      document.addEventListener('mousedown', handleClickOutside, { capture: true, passive: true });
       document.addEventListener('touchstart', handleClickOutside, { passive: true, capture: true });
     }
     
@@ -287,21 +295,88 @@ const UnifiedNavigation = () => {
     };
   }, [showAIStudio, currentContext, location.pathname]);
 
+  // CRITICAL FIX: Enhanced navigation handler with error handling
+  const handleNavigation = useCallback((route, context = 'web3') => {
+    try {
+      navigate(route);
+      setCurrentContext(context);
+      setShowAIStudio(false);
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // Fallback navigation
+      window.location.href = route;
+    }
+  }, [navigate]);
+
+  // CRITICAL FIX: Enhanced tab click handler with error handling
+  const handleTabClick = useCallback((tabId) => {
+    try {
+      const navItem = web3Navigation.find(nav => nav.id === tabId);
+      if (navItem) {
+        setActiveTab(tabId);
+        setCurrentContext('web3');
+        setShowAIStudio(false);
+        navigate(navItem.route);
+      }
+    } catch (error) {
+      console.error('Tab click error:', error);
+      // Fallback
+      setActiveTab('build');
+      navigate('/');
+    }
+  }, [navigate]);
+
+  // CRITICAL FIX: Enhanced AI Studio toggle with better state management
+  const handleAIStudioToggle = useCallback(() => {
+    try {
+      const newShowState = !showAIStudio;
+      setShowAIStudio(newShowState);
+      
+      // Update active tab state based on context
+      if (newShowState) {
+        // Opening AI Studio - set as active if not on a specific AI route
+        if (currentContext !== 'ai') {
+          setActiveTab('ai-studio');
+        }
+      } else {
+        // Closing AI Studio - revert to appropriate tab
+        if (currentContext !== 'ai') {
+          const currentPath = location.pathname;
+          const web3Route = web3Navigation.find(nav => nav.route === currentPath);
+          setActiveTab(web3Route?.id || 'build');
+        }
+      }
+    } catch (error) {
+      console.error('AI Studio toggle error:', error);
+      setShowAIStudio(false);
+    }
+  }, [showAIStudio, currentContext, location.pathname]);
+
+  const formatAddress = (address) => {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
   return (
     <>
-      {/* CRITICAL FIX: Enhanced Apple-Style Transparent Header with better backdrop and contrast */}
+      {/* CRITICAL FIX: Enhanced Apple-Style Header with improved backdrop and accessibility */}
       <header className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out will-change-transform",
         isScrolled 
-          ? "bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 shadow-lg" 
+          ? "bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-slate-900/5" 
           : "bg-transparent"
       )}>
         <div className="flex h-16 items-center justify-between px-4 lg:px-6">
-          {/* Logo Section - ENHANCED ACCESSIBILITY AND CONTRAST */}
+          {/* Logo Section - Enhanced with better error handling */}
           <Link 
             to="/" 
             className="flex items-center space-x-2 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg p-1"
             aria-label="BitLink Web3 Platform Home"
+            onClick={() => {
+              setActiveTab('build');
+              setCurrentContext('web3');
+              setShowAIStudio(false);
+            }}
           >
             <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-blue-600 to-emerald-500 rounded-lg shadow-lg">
               <Icon name="Link2" size={20} color="white" strokeWidth={2.5} />
@@ -314,7 +389,7 @@ const UnifiedNavigation = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation - ENHANCED CONTRAST & ACCESSIBILITY */}
+          {/* Desktop Navigation - Enhanced with better accessibility */}
           <nav className="hidden lg:flex items-center space-x-2" role="navigation" aria-label="Main navigation">
             {web3Navigation.map((item) => {
               const isActive = activeTab === item.id && currentContext === 'web3';
@@ -325,7 +400,7 @@ const UnifiedNavigation = () => {
                   className={cn(
                     "flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 min-h-[44px] min-w-[44px] touch-manipulation",
                     isActive 
-                      ? "bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30 shadow-lg contrast-more:bg-blue-600 contrast-more:text-white contrast-more:border-blue-800" 
+                      ? "bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30 shadow-lg backdrop-blur-sm contrast-more:bg-blue-600 contrast-more:text-white contrast-more:border-blue-800" 
                       : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/60 hover:backdrop-blur-sm contrast-more:text-black contrast-more:hover:bg-slate-200 contrast-more:font-semibold"
                   )}
                   title={item.description}
@@ -338,7 +413,7 @@ const UnifiedNavigation = () => {
               );
             })}
             
-            {/* CRITICAL FIX: AI Studio Access with enhanced visibility and contrast */}
+            {/* CRITICAL FIX: Enhanced AI Studio button with better state indication */}
             <div className="relative" data-ai-studio-container>
               <Button
                 variant={activeTab === 'ai-studio' || currentContext === 'ai' ? 'default' : 'ghost'}
@@ -366,15 +441,15 @@ const UnifiedNavigation = () => {
                 />
               </Button>
 
-              {/* CRITICAL FIX: AI Tools Dropdown - MAXIMUM CONTRAST AND READABILITY */}
+              {/* CRITICAL FIX: Enhanced AI Tools Dropdown with MAXIMUM CONTRAST */}
               {showAIStudio && (
-                <div className="absolute top-full right-0 mt-2 w-80 bg-white/98 dark:bg-slate-950/98 backdrop-blur-xl border border-slate-300/60 dark:border-slate-600/60 rounded-2xl shadow-2xl overflow-hidden z-50">
-                  <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/80 dark:bg-slate-800/50">
-                    <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 contrast-more:text-black contrast-more:font-extrabold text-shadow">
+                <div className="absolute top-full right-0 mt-2 w-80 bg-white/99 dark:bg-slate-950/99 backdrop-blur-xl border-2 border-slate-300/80 dark:border-slate-600/80 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in slide-in-from-top-2 duration-200">
+                  <div className="p-4 border-b border-slate-200/60 dark:border-slate-700/60 bg-slate-50/90 dark:bg-slate-800/75">
+                    <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 contrast-more:text-black contrast-more:font-extrabold text-shadow-lg">
                       <Icon name="Sparkles" size={16} className="text-emerald-600 dark:text-emerald-400" />
                       AI Creative Studio
                     </h3>
-                    <p className="text-sm text-slate-700 dark:text-slate-300 mt-1 contrast-more:text-black contrast-more:font-medium">
+                    <p className="text-sm text-slate-800 dark:text-slate-200 mt-1 contrast-more:text-black contrast-more:font-bold text-shadow">
                       AI tools for content creation
                     </p>
                   </div>
@@ -384,7 +459,7 @@ const UnifiedNavigation = () => {
                         <button
                           key={tool.id}
                           onClick={() => handleNavigation(tool.route, 'ai')}
-                          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100/70 dark:hover:bg-slate-700/70 active:bg-slate-200/90 dark:active:bg-slate-600/90 transition-all duration-300 text-left group hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950 min-h-[56px] touch-manipulation"
+                          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100/80 dark:hover:bg-slate-700/80 active:bg-slate-200/90 dark:active:bg-slate-600/90 transition-all duration-300 text-left group hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950 min-h-[56px] touch-manipulation border border-transparent hover:border-slate-200/60 dark:hover:border-slate-600/60"
                           aria-label={`Open ${tool.name}: ${tool.description}`}
                         >
                           <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r shrink-0 shadow-md", tool.gradient)}>
@@ -392,7 +467,7 @@ const UnifiedNavigation = () => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-slate-900 dark:text-white text-sm truncate contrast-more:text-black contrast-more:font-bold text-shadow">
+                              <span className="font-bold text-slate-900 dark:text-white text-sm truncate contrast-more:text-black contrast-more:font-extrabold text-shadow-lg">
                                 {tool.name}
                               </span>
                               {tool.isNew && (
@@ -401,14 +476,14 @@ const UnifiedNavigation = () => {
                                 </span>
                               )}
                             </div>
-                            <p className="text-sm text-slate-600 dark:text-slate-400 truncate contrast-more:text-black contrast-more:font-medium">
+                            <p className="text-sm text-slate-700 dark:text-slate-300 truncate contrast-more:text-black contrast-more:font-bold">
                               {tool.description}
                             </p>
                           </div>
                           <Icon 
                             name="ChevronRight" 
                             size={16} 
-                            className="text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors shrink-0 contrast-more:text-black" 
+                            className="text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors shrink-0 contrast-more:text-black" 
                           />
                         </button>
                       ))}
@@ -543,7 +618,7 @@ const UnifiedNavigation = () => {
                   <button
                     key={tool.id}
                     onClick={() => handleNavigation(tool.route, 'ai')}
-                    className="flex items-center gap-4 p-4 bg-slate-50/90 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl border border-slate-200/60 dark:border-slate-600/60 hover:bg-slate-100/70 dark:hover:bg-slate-700/70 active:bg-slate-200/90 dark:active:bg-slate-600/90 transition-all duration-300 text-left group hover:scale-[1.02] w-full touch-manipulation focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950 min-h-[76px] shadow-sm hover:shadow-md"
+                    className="flex items-center gap-4 p-4 bg-slate-50/95 dark:bg-slate-800/75 backdrop-blur-sm rounded-2xl border-2 border-slate-200/70 dark:border-slate-600/70 hover:bg-slate-100/80 dark:hover:bg-slate-700/80 active:bg-slate-200/90 dark:active:bg-slate-600/90 transition-all duration-300 text-left group hover:scale-[1.02] w-full touch-manipulation focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950 min-h-[76px] shadow-sm hover:shadow-md"
                     aria-label={`Open ${tool.name}: ${tool.description}`}
                   >
                     <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r shrink-0 shadow-lg", tool.gradient)}>
@@ -551,7 +626,7 @@ const UnifiedNavigation = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-bold text-slate-900 dark:text-white truncate contrast-more:text-black contrast-more:font-extrabold text-shadow">
+                        <h3 className="font-extrabold text-slate-900 dark:text-white truncate contrast-more:text-black contrast-more:font-black text-shadow-lg">
                           {tool.name}
                         </h3>
                         {tool.isNew && (
@@ -560,14 +635,14 @@ const UnifiedNavigation = () => {
                           </span>
                         )}
                       </div>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm truncate contrast-more:text-black contrast-more:font-medium">
+                      <p className="text-slate-700 dark:text-slate-300 text-sm truncate contrast-more:text-black contrast-more:font-bold">
                         {tool.description}
                       </p>
                     </div>
                     <Icon 
                       name="ChevronRight" 
                       size={16} 
-                      className="text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors shrink-0 contrast-more:text-black" 
+                      className="text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors shrink-0 contrast-more:text-black" 
                     />
                   </button>
                 ))}

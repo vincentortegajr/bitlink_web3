@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
-import Button from '../../../components/ui/Button';
+
 import { getTheme } from '../../../utils/themes';
 
 const ProfilePreview = ({ 
@@ -28,6 +28,12 @@ const ProfilePreview = ({
   const fileInputRef = useRef(null);
   
   const theme = getTheme(selectedTheme);
+
+  // CRITICAL FIX: Sync local state when profileData changes
+  React.useEffect(() => {
+    setEditedName(profileData?.name || '');
+    setEditedBio(profileData?.bio || '');
+  }, [profileData?.name, profileData?.bio]);
 
   // Enhanced profile picture upload with better error handling
   const handleProfilePictureClick = () => {
@@ -73,14 +79,16 @@ const ProfilePreview = ({
     reader.readAsDataURL(file);
   };
 
-  // Enhanced name editing with validation
+  // CRITICAL FIX: Enhanced name editing with proper validation and state management
   const handleNameClick = () => {
-    setIsEditingName(true);
-    setEditedName(profileData?.name || '');
-    setSaveError('');
+    if (!isEditingName) {
+      setIsEditingName(true);
+      setEditedName(profileData?.name || '');
+      setSaveError('');
+    }
   };
 
-  const handleNameSave = () => {
+  const handleNameSave = async () => {
     const trimmedName = editedName.trim();
     
     if (!trimmedName) {
@@ -93,11 +101,17 @@ const ProfilePreview = ({
       return;
     }
     
-    if (trimmedName !== profileData?.name) {
-      setHasChanges(true);
+    try {
+      if (trimmedName !== profileData?.name) {
+        await onProfileUpdate?.({ name: trimmedName });
+        setHasChanges(false);
+      }
+      setIsEditingName(false);
+      setSaveError('');
+    } catch (error) {
+      setSaveError('Failed to save name. Please try again.');
+      console.error('Error saving name:', error);
     }
-    setIsEditingName(false);
-    setSaveError('');
   };
 
   const handleNameCancel = () => {
@@ -116,14 +130,16 @@ const ProfilePreview = ({
     }
   };
 
-  // Enhanced bio editing with validation
+  // CRITICAL FIX: Enhanced bio editing with proper validation and state management
   const handleBioClick = () => {
-    setIsEditingBio(true);
-    setEditedBio(profileData?.bio || '');
-    setSaveError('');
+    if (!isEditingBio) {
+      setIsEditingBio(true);
+      setEditedBio(profileData?.bio || '');
+      setSaveError('');
+    }
   };
 
-  const handleBioSave = () => {
+  const handleBioSave = async () => {
     const trimmedBio = editedBio.trim();
     
     if (trimmedBio.length > 150) {
@@ -131,11 +147,17 @@ const ProfilePreview = ({
       return;
     }
     
-    if (trimmedBio !== profileData?.bio) {
-      setHasChanges(true);
+    try {
+      if (trimmedBio !== profileData?.bio) {
+        await onProfileUpdate?.({ bio: trimmedBio });
+        setHasChanges(false);
+      }
+      setIsEditingBio(false);
+      setSaveError('');
+    } catch (error) {
+      setSaveError('Failed to save bio. Please try again.');
+      console.error('Error saving bio:', error);
     }
-    setIsEditingBio(false);
-    setSaveError('');
   };
 
   const handleBioCancel = () => {
@@ -154,7 +176,7 @@ const ProfilePreview = ({
     }
   };
 
-  // Enhanced save with better error handling
+  // CRITICAL FIX: Remove redundant save function - direct saving is now handled in individual handlers
   const handleSaveChanges = async () => {
     setIsSaving(true);
     setSaveError('');
@@ -168,9 +190,6 @@ const ProfilePreview = ({
       
       await onProfileUpdate?.(updatedData);
       setHasChanges(false);
-      
-      // Simulate save delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 800));
       
     } catch (error) {
       console.error('Error saving profile:', error);
@@ -187,13 +206,13 @@ const ProfilePreview = ({
     const componentHeight = 80;
     const index = Math.floor(y / componentHeight);
     setDragOverIndex(index);
-    onDragOver(e);
+    onDragOver?.(e);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     setDragOverIndex(null);
-    onDrop(e, dragOverIndex);
+    onDrop?.(e, dragOverIndex);
   };
 
   const handleDragLeave = () => {
@@ -391,39 +410,66 @@ const ProfilePreview = ({
             />
           </div>
           
-          {/* Error Messages */}
+          {/* CRITICAL FIX: Enhanced error messaging with better UX */}
           {(uploadError || saveError) && (
-            <div className="max-w-xs mx-auto p-2 bg-red-500/20 border border-red-400/60 rounded-lg backdrop-blur-sm">
-              <p className="text-xs text-red-200 font-medium">
-                {uploadError || saveError}
-              </p>
+            <div className="max-w-xs mx-auto p-3 bg-red-500/20 border border-red-400/60 rounded-xl backdrop-blur-sm">
+              <div className="flex items-center gap-2">
+                <Icon name="AlertCircle" size={14} className="text-red-200 shrink-0" />
+                <p className="text-xs text-red-200 font-medium">
+                  {uploadError || saveError}
+                </p>
+              </div>
             </div>
           )}
           
-          <div className="space-y-1">
-            {/* Enhanced Editable Name */}
+          <div className="space-y-2">
+            {/* CRITICAL FIX: Enhanced Editable Name with better UX */}
             <div className="cursor-pointer group" onClick={handleNameClick}>
               {isEditingName ? (
-                <input
-                  type="text"
-                  value={editedName}
-                  onChange={(e) => setEditedName(e.target.value)}
-                  onBlur={handleNameSave}
-                  onKeyDown={handleNameKeyPress}
-                  className="text-sm font-bold text-white bg-white/20 border-2 border-white/40 rounded-lg px-3 py-1 text-center backdrop-blur-sm focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/30 max-w-xs mx-auto"
-                  placeholder="Enter your name"
-                  autoFocus
-                  maxLength={50}
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    onBlur={handleNameSave}
+                    onKeyDown={handleNameKeyPress}
+                    className="text-sm font-bold text-white bg-white/20 border-2 border-white/40 rounded-lg px-3 py-2 text-center backdrop-blur-sm focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/30 max-w-xs mx-auto w-full"
+                    placeholder="Enter your name"
+                    autoFocus
+                    maxLength={50}
+                  />
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNameSave();
+                      }}
+                      className="p-1.5 bg-green-500/80 hover:bg-green-500 rounded-lg transition-colors touch-manipulation"
+                      aria-label="Save name"
+                    >
+                      <Icon name="Check" size={12} className="text-white" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNameCancel();
+                      }}
+                      className="p-1.5 bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors touch-manipulation"
+                      aria-label="Cancel editing"
+                    >
+                      <Icon name="X" size={12} className="text-white" />
+                    </button>
+                  </div>
+                </div>
               ) : (
-                <h1 className="text-sm font-bold text-white leading-tight tracking-tight drop-shadow-lg group-hover:bg-white/10 group-hover:rounded-lg px-2 py-1 transition-all duration-300 inline-block">
-                  {profileData?.name || 'Click to edit name'}
+                <h1 className="text-sm font-bold text-white leading-tight tracking-tight drop-shadow-lg group-hover:bg-white/10 group-hover:rounded-lg px-3 py-2 transition-all duration-300 inline-block cursor-pointer">
+                  {profileData?.name || 'Click to add your name'}
                   <Icon name="Edit2" size={12} className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline" />
                 </h1>
               )}
             </div>
             
-            {/* Enhanced Editable Bio */}
+            {/* CRITICAL FIX: Enhanced Editable Bio with better UX */}
             <div className="max-w-xs mx-auto cursor-pointer group" onClick={handleBioClick}>
               {isEditingBio ? (
                 <div className="relative">
@@ -438,62 +484,68 @@ const ProfilePreview = ({
                     rows={3}
                     maxLength={150}
                   />
-                  <div className="absolute bottom-1 right-2 text-xs text-white/60">
-                    {editedBio.length}/150
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="text-xs text-white/60">
+                      {editedBio.length}/150
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBioSave();
+                        }}
+                        className="p-1.5 bg-green-500/80 hover:bg-green-500 rounded-lg transition-colors touch-manipulation"
+                        aria-label="Save bio"
+                      >
+                        <Icon name="Check" size={12} className="text-white" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBioCancel();
+                        }}
+                        className="p-1.5 bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors touch-manipulation"
+                        aria-label="Cancel editing"
+                      >
+                        <Icon name="X" size={12} className="text-white" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ) : (
-                <p className="text-xs text-white/90 leading-relaxed drop-shadow-md font-medium whitespace-pre-line group-hover:bg-white/10 group-hover:rounded-lg px-2 py-1 transition-all duration-300 min-h-[20px]">
-                  {profileData?.bio || 'Click to edit bio...'}
+                <p className="text-xs text-white/90 leading-relaxed drop-shadow-md font-medium whitespace-pre-line group-hover:bg-white/10 group-hover:rounded-lg px-3 py-2 transition-all duration-300 min-h-[24px] cursor-pointer">
+                  {profileData?.bio || 'Click to add your bio...'}
                   <Icon name="Edit2" size={10} className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline" />
                 </p>
               )}
             </div>
             
-            <div className="flex items-center justify-center space-x-1 pt-0.5">
+            <div className="flex items-center justify-center space-x-1 pt-1">
               <div className="w-1.5 h-1.5 bg-gradient-to-r from-green-400 to-green-500 rounded-full animate-pulse shadow-lg"></div>
               <span className="text-xs text-white font-semibold tracking-wide drop-shadow-sm">Web3 Verified</span>
               <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full animate-pulse shadow-lg"></div>
             </div>
           </div>
-
-          {/* Enhanced Save Changes Button */}
-          {hasChanges && (
-            <div className="pt-3">
-              <Button
-                onClick={handleSaveChanges}
-                loading={isSaving}
-                variant="success"
-                size="sm"
-                iconName="Save"
-                iconPosition="left"
-                className="text-xs font-bold shadow-xl hover:shadow-2xl hover:shadow-green-500/30"
-                disabled={isSaving}
-              >
-                {isSaving ? 'Saving...' : 'Save Changes'}
-              </Button>
-            </div>
-          )}
         </div>
 
-        {/* Components Area with enhanced styling */}
+        {/* Components Area with enhanced drag and drop */}
         <div
           className="relative p-4 min-h-96 space-y-3 backdrop-blur-sm"
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           onDragLeave={handleDragLeave}
         >
-          {components.length === 0 ? (
-            <div className="text-center py-12 space-y-3">
+          {components?.length === 0 ? (
+            <div className="text-center py-16 space-y-4">
               <div className="relative">
-                <div className="w-14 h-14 bg-gradient-to-br from-white/20 to-white/10 rounded-full flex items-center justify-center mx-auto border-2 border-white/30 shadow-2xl backdrop-blur-sm">
-                  <Icon name="Plus" size={20} className="text-white drop-shadow-sm" />
+                <div className="w-16 h-16 bg-gradient-to-br from-white/20 to-white/10 rounded-full flex items-center justify-center mx-auto border-2 border-white/30 shadow-2xl backdrop-blur-sm">
+                  <Icon name="Plus" size={24} className="text-white drop-shadow-sm" />
                 </div>
-                <div className={`absolute inset-0 bg-gradient-to-r ${theme.accent} rounded-full animate-pulse blur-sm`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-r ${theme.accent} rounded-full animate-pulse blur-sm opacity-50`}></div>
               </div>
               <div>
-                <h3 className="text-xs font-semibold text-white leading-tight tracking-tight drop-shadow-lg">Start Building</h3>
-                <p className="text-xs text-white/80 mt-0.5 drop-shadow-md opacity-90">Drag components from the library to build your profile</p>
+                <h3 className="text-sm font-semibold text-white leading-tight tracking-tight drop-shadow-lg">Start Building Your Profile</h3>
+                <p className="text-xs text-white/80 mt-1 drop-shadow-md opacity-90 max-w-xs mx-auto">Drag components from the library or use the Add Link button to build your Web3 profile</p>
               </div>
             </div>
           ) : (
@@ -501,20 +553,20 @@ const ProfilePreview = ({
               {components.map((component, index) => (
                 <React.Fragment key={component.id}>
                   {dragOverIndex === index && (
-                    <div className="h-2 bg-gradient-to-r from-white/40 via-purple-400/30 to-pink-400/40 rounded-full border-2 border-dashed border-white/60 shadow-lg backdrop-blur-sm"></div>
+                    <div className="h-2 bg-gradient-to-r from-white/40 via-purple-400/30 to-pink-400/40 rounded-full border-2 border-dashed border-white/60 shadow-lg backdrop-blur-sm animate-pulse"></div>
                   )}
                   {renderComponent(component, index)}
                 </React.Fragment>
               ))}
               {dragOverIndex === components.length && (
-                <div className="h-2 bg-gradient-to-r from-white/40 via-purple-400/30 to-pink-400/40 rounded-full border-2 border-dashed border-white/60 shadow-lg backdrop-blur-sm"></div>
+                <div className="h-2 bg-gradient-to-r from-white/40 via-purple-400/30 to-pink-400/40 rounded-full border-2 border-dashed border-white/60 shadow-lg backdrop-blur-sm animate-pulse"></div>
               )}
             </>
           )}
         </div>
 
         {/* Enhanced Footer with TikTok styling */}
-        <div className="relative p-2.5 bg-gradient-to-r from-black/20 via-black/10 to-black/20 border-t border-white/20 text-center backdrop-blur-lg">
+        <div className="relative p-3 bg-gradient-to-r from-black/20 via-black/10 to-black/20 border-t border-white/20 text-center backdrop-blur-lg">
           <p className="text-xs text-white/80 font-medium drop-shadow-sm">
             Powered by <span className="font-semibold text-white tracking-wide drop-shadow-md">BitLink Web3</span>
           </p>

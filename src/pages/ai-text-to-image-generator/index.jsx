@@ -13,7 +13,6 @@ import GenerationHistory from './components/GenerationHistory';
 import GenerationPreview from './components/GenerationPreview';
 import Header from '../../components/ui/Header';
 
-
 const AITextToImageGenerator = () => {
   const navigate = useNavigate();
   
@@ -25,6 +24,7 @@ const AITextToImageGenerator = () => {
   const [generatedImages, setGeneratedImages] = useState([]);
   const [activeTab, setActiveTab] = useState('generate'); // generate, history, monitor
   const [showMobileSettings, setShowMobileSettings] = useState(false);
+  const [generationError, setGenerationError] = useState('');
 
   // Settings state
   const [settings, setSettings] = useState({
@@ -38,13 +38,17 @@ const AITextToImageGenerator = () => {
     seed: ''
   });
 
-  // FastAPI endpoint integration
+  // CRITICAL FIX: Enhanced FastAPI endpoint integration with proper error handling
   const generateImage = useCallback(async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim()) {
+      setGenerationError('Please enter a prompt to generate an image.');
+      return;
+    }
 
     setIsGenerating(true);
     setProgress(0);
-    setEstimatedTime(60); // Initial estimate
+    setEstimatedTime(60);
+    setGenerationError('');
 
     try {
       const response = await fetch('/api/v1/text-to-image/generate', {
@@ -65,80 +69,122 @@ const AITextToImageGenerator = () => {
         })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        
-        // Simulate progress updates (would be replaced by WebSocket/SSE in production)
-        const progressInterval = setInterval(() => {
-          setProgress(prev => {
-            const newProgress = Math.min(100, prev + Math.random() * 15);
-            setEstimatedTime(prev => Math.max(0, prev - 2));
-            return newProgress;
-          });
-        }, 1000);
-
-        // Simulate completion after processing
-        setTimeout(() => {
-          clearInterval(progressInterval);
-          setProgress(100);
-          setEstimatedTime(0);
-          
-          // Mock generated images
-          const newImages = Array.from({ length: settings.batchSize }, (_, index) => ({
-            id: `img-${Date.now()}-${index}`,
-            url: `/api/placeholder/512/512?text=Generated+${index + 1}`,
-            seed: settings.seed || Math.floor(Math.random() * 1000000),
-            quality: settings.quality,
-            processingTime: 85 + Math.random() * 30,
-            resolution: '512x512',
-            settings: { ...settings }
-          }));
-
-          setGeneratedImages(newImages);
-          setIsGenerating(false);
-        }, 8000);
-
-      } else {
-        throw new Error('Generation failed');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const data = await response.json();
+      
+      // CRITICAL FIX: Enhanced progress simulation with better UX
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          const increment = Math.random() * 12 + 3; // 3-15% increments
+          const newProgress = Math.min(95, prev + increment); // Cap at 95% until completion
+          setEstimatedTime(prevTime => Math.max(0, prevTime - Math.random() * 3));
+          return newProgress;
+        });
+      }, 800);
+
+      // Simulate completion after processing
+      setTimeout(() => {
+        clearInterval(progressInterval);
+        setProgress(100);
+        setEstimatedTime(0);
+        
+        // CRITICAL FIX: Better mock data generation
+        const newImages = Array.from({ length: settings.batchSize }, (_, index) => ({
+          id: `img-${Date.now()}-${index}`,
+          url: `https://picsum.photos/512/512?random=${Date.now() + index}`, // Better placeholder
+          seed: settings.seed || Math.floor(Math.random() * 1000000),
+          quality: settings.quality,
+          processingTime: 85 + Math.random() * 30,
+          resolution: '512x512',
+          prompt: prompt.trim(),
+          settings: { ...settings },
+          createdAt: new Date().toISOString()
+        }));
+
+        setGeneratedImages(prev => [...newImages, ...prev]); // Add to top of history
+        setIsGenerating(false);
+        
+        // CRITICAL FIX: Auto-switch to generated content
+        if (window.innerWidth < 1024) {
+          setActiveTab('generate');
+        }
+        
+      }, 6000 + Math.random() * 4000); // 6-10 seconds
+
     } catch (error) {
       console.error('Generation error:', error);
       setIsGenerating(false);
       setProgress(0);
-      // Handle error state
+      setEstimatedTime(0);
+      setGenerationError(
+        error.message.includes('fetch') 
+          ? 'Unable to connect to AI service. Please check your connection and try again.' :'Failed to generate image. Please try again with a different prompt.'
+      );
     }
   }, [prompt, settings]);
 
+  // CRITICAL FIX: Enhanced prompt enhancement with validation
   const handlePromptEnhance = (enhancement) => {
-    setPrompt(prev => prev ? `${prev}, ${enhancement}` : enhancement);
+    if (!enhancement?.trim()) return;
+    
+    setPrompt(prev => {
+      const trimmed = prev.trim();
+      return trimmed ? `${trimmed}, ${enhancement}` : enhancement;
+    });
   };
 
   const handlePromptSelect = (selectedPrompt) => {
-    setPrompt(selectedPrompt);
-    setActiveTab('generate');
+    if (selectedPrompt?.trim()) {
+      setPrompt(selectedPrompt);
+      setActiveTab('generate');
+      setGenerationError('');
+    }
   };
 
   const handleImageRegenerate = (selectedPrompt, selectedSettings) => {
-    setPrompt(selectedPrompt);
-    setSettings({ ...settings, ...selectedSettings });
-    setActiveTab('generate');
-    setTimeout(() => generateImage(), 100);
+    if (selectedPrompt?.trim()) {
+      setPrompt(selectedPrompt);
+      setSettings({ ...settings, ...selectedSettings });
+      setActiveTab('generate');
+      setGenerationError('');
+      setTimeout(() => generateImage(), 100);
+    }
   };
 
-  const handleDownload = (image) => {
-    if (image?.url) {
+  // CRITICAL FIX: Enhanced download handler with error handling
+  const handleDownload = async (image) => {
+    if (!image?.url) return;
+    
+    try {
+      const response = await fetch(image.url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
       const link = document.createElement('a');
-      link.href = image.url;
+      link.href = url;
       link.download = `ai-generated-${image.id || Date.now()}.png`;
       document.body.appendChild(link);
       link.click();
+      
+      // Cleanup
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download error:', error);
+      // Fallback: open in new tab
+      window.open(image.url, '_blank');
     }
   };
 
   const handleRegenerate = (image) => {
-    if (image?.settings) {
+    if (image?.settings && image?.prompt) {
+      setPrompt(image.prompt);
       setSettings({ ...settings, ...image.settings });
+      setActiveTab('generate');
+      setGenerationError('');
       setTimeout(() => generateImage(), 100);
     }
   };
@@ -148,40 +194,58 @@ const AITextToImageGenerator = () => {
       <Header />
       
       <div className="container mx-auto px-4 py-6 mobile-container">
-        {/* Page Header */}
+        {/* Page Header with enhanced styling */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Icon name="ImageIcon" size={20} className="text-primary" />
+            <div className="p-3 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl border border-primary/20">
+              <Icon name="ImageIcon" size={24} className="text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-text-primary">AI Text-to-Image Generator</h1>
-              <p className="text-text-secondary">Create stunning images from text prompts using RunPod GPU</p>
+              <h1 className="text-2xl lg:text-3xl font-bold text-text-primary">AI Text-to-Image Generator</h1>
+              <p className="text-text-secondary">Create stunning images from text prompts using AI</p>
             </div>
           </div>
         </div>
 
-        {/* Desktop Layout */}
+        {/* CRITICAL FIX: Enhanced error display */}
+        {generationError && (
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+            <div className="flex items-center gap-2">
+              <Icon name="AlertCircle" size={16} className="text-red-600 dark:text-red-400 shrink-0" />
+              <p className="text-red-800 dark:text-red-200 text-sm font-medium">
+                {generationError}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop Layout - Enhanced with better spacing */}
         <div className="hidden lg:grid lg:grid-cols-12 gap-6 pb-6">
           {/* Left Sidebar - Controls */}
           <div className="lg:col-span-4 space-y-6">
             {/* Prompt Input */}
-            <div className="bg-card rounded-lg p-4 border">
-              <h3 className="font-semibold text-text-primary mb-3">Prompt</h3>
+            <div className="bg-card rounded-xl p-6 border shadow-sm">
+              <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
+                <Icon name="Edit3" size={18} className="text-primary" />
+                Prompt
+              </h3>
               <textarea
                 className={cn(
-                  "flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
+                  "flex w-full rounded-lg border border-input bg-background px-4 py-3 text-sm ring-offset-background",
                   "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                  "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none transition-all duration-200"
                 )}
-                placeholder="Describe the image you want to create..."
+                placeholder="Describe the image you want to create... (e.g., 'A majestic dragon flying over a futuristic city at sunset')"
                 value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
+                onChange={(e) => {
+                  setPrompt(e.target.value);
+                  setGenerationError('');
+                }}
                 disabled={isGenerating}
                 rows={4}
               />
               
-              <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center justify-between mt-4">
                 <span className="text-xs text-text-secondary">
                   {prompt.length} characters
                 </span>
@@ -191,15 +255,19 @@ const AITextToImageGenerator = () => {
                   loading={isGenerating}
                   iconName="Zap"
                   iconPosition="left"
+                  className="min-w-[120px]"
                 >
-                  Generate
+                  {isGenerating ? 'Generating...' : 'Generate'}
                 </Button>
               </div>
             </div>
 
             {/* Prompt Enhancer */}
-            <div className="bg-card rounded-lg p-4 border">
-              <h3 className="font-semibold text-text-primary mb-3">Enhance Prompt</h3>
+            <div className="bg-card rounded-xl p-6 border shadow-sm">
+              <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
+                <Icon name="Sparkles" size={18} className="text-primary" />
+                Enhance Prompt
+              </h3>
               <PromptEnhancer
                 onEnhance={handlePromptEnhance}
                 loading={isGenerating}
@@ -207,8 +275,11 @@ const AITextToImageGenerator = () => {
             </div>
 
             {/* Generation Settings */}
-            <div className="bg-card rounded-lg p-4 border">
-              <h3 className="font-semibold text-text-primary mb-3">Settings</h3>
+            <div className="bg-card rounded-xl p-6 border shadow-sm">
+              <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
+                <Icon name="Settings" size={18} className="text-primary" />
+                Settings
+              </h3>
               <GenerationSettings
                 settings={settings}
                 onSettingsChange={setSettings}
@@ -226,14 +297,17 @@ const AITextToImageGenerator = () => {
               generatedImages={generatedImages}
               onDownload={handleDownload}
               onRegenerate={handleRegenerate}
+              prompt={prompt}
+              generationError={generationError}
             />
           </div>
 
           {/* Right Sidebar - Monitor & History */}
           <div className="lg:col-span-3 space-y-6">
             <GPUResourceMonitor isGenerating={isGenerating} />
-            <div className="bg-card rounded-lg p-4 border">
+            <div className="bg-card rounded-xl p-6 border shadow-sm">
               <GenerationHistory
+                images={generatedImages}
                 onPromptSelect={handlePromptSelect}
                 onImageRegenerate={handleImageRegenerate}
               />
@@ -241,10 +315,10 @@ const AITextToImageGenerator = () => {
           </div>
         </div>
 
-        {/* Mobile Layout - FIXED SCROLLING */}
+        {/* CRITICAL FIX: Enhanced Mobile Layout with better UX */}
         <div className="lg:hidden">
           {/* Tab Navigation */}
-          <div className="flex rounded-lg bg-muted p-1 mb-4">
+          <div className="flex rounded-xl bg-muted p-1 mb-6 shadow-sm">
             {[
               { id: 'generate', label: 'Generate', icon: 'Zap' },
               { id: 'history', label: 'History', icon: 'Clock' },
@@ -254,10 +328,10 @@ const AITextToImageGenerator = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-colors",
+                  "flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-300 min-h-[48px] touch-manipulation",
                   activeTab === tab.id
-                    ? "bg-primary text-primary-foreground"
-                    : "text-text-secondary hover:text-text-primary"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-text-secondary hover:text-text-primary hover:bg-background/50"
                 )}
               >
                 <Icon name={tab.icon} size={16} />
@@ -266,10 +340,10 @@ const AITextToImageGenerator = () => {
             ))}
           </div>
 
-          {/* Tab Content - FIXED MOBILE SCROLLING */}
+          {/* Tab Content - CRITICAL FIX: Enhanced mobile scrolling */}
           <div className="mobile-scroll-container">
             {activeTab === 'generate' && (
-              <div className="space-y-4 pb-6">
+              <div className="space-y-6 pb-8">
                 {/* Preview */}
                 <GenerationPreview
                   isGenerating={isGenerating}
@@ -278,30 +352,37 @@ const AITextToImageGenerator = () => {
                   generatedImages={generatedImages}
                   onDownload={handleDownload}
                   onRegenerate={handleRegenerate}
+                  prompt={prompt}
+                  generationError={generationError}
                 />
 
                 {/* Prompt Input */}
-                <div className="bg-card rounded-lg p-4 border">
+                <div className="bg-card rounded-xl p-6 border shadow-sm">
+                  <h3 className="font-semibold text-text-primary mb-4">Create Your Image</h3>
                   <textarea
                     className={cn(
-                      "flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
+                      "flex w-full rounded-lg border border-input bg-background px-4 py-3 text-sm ring-offset-background mb-4",
                       "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none mb-3"
+                      "focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
                     )}
                     placeholder="Describe the image you want to create..."
                     value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
+                    onChange={(e) => {
+                      setPrompt(e.target.value);
+                      setGenerationError('');
+                    }}
                     disabled={isGenerating}
                     rows={3}
                   />
                   
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setShowMobileSettings(!showMobileSettings)}
                       iconName="Settings"
                       iconPosition="left"
+                      className="min-w-[100px]"
                     >
                       Settings
                     </Button>
@@ -311,16 +392,19 @@ const AITextToImageGenerator = () => {
                       loading={isGenerating}
                       iconName="Zap"
                       iconPosition="left"
-                      className="flex-1"
+                      className="flex-1 min-h-[48px]"
                     >
-                      Generate
+                      {isGenerating ? 'Generating...' : 'Generate Image'}
                     </Button>
                   </div>
                 </div>
 
                 {/* Prompt Enhancer */}
-                <div className="bg-card rounded-lg p-4 border">
-                  <h3 className="font-semibold text-text-primary mb-3">Enhance Prompt</h3>
+                <div className="bg-card rounded-xl p-6 border shadow-sm">
+                  <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <Icon name="Sparkles" size={18} className="text-primary" />
+                    Enhance Your Prompt
+                  </h3>
                   <PromptEnhancer
                     onEnhance={handlePromptEnhance}
                     loading={isGenerating}
@@ -329,14 +413,18 @@ const AITextToImageGenerator = () => {
 
                 {/* Mobile Settings */}
                 {showMobileSettings && (
-                  <div className="bg-card rounded-lg p-4 border">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-text-primary">Settings</h3>
+                  <div className="bg-card rounded-xl p-6 border shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-semibold text-text-primary flex items-center gap-2">
+                        <Icon name="Settings" size={18} className="text-primary" />
+                        Generation Settings
+                      </h3>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => setShowMobileSettings(false)}
                         iconName="X"
+                        className="h-8 w-8"
                       />
                     </div>
                     <GenerationSettings
@@ -350,8 +438,9 @@ const AITextToImageGenerator = () => {
             )}
 
             {activeTab === 'history' && (
-              <div className="bg-card rounded-lg p-4 border pb-6">
+              <div className="bg-card rounded-xl p-6 border shadow-sm pb-8">
                 <GenerationHistory
+                  images={generatedImages}
                   onPromptSelect={handlePromptSelect}
                   onImageRegenerate={handleImageRegenerate}
                 />
@@ -359,7 +448,7 @@ const AITextToImageGenerator = () => {
             )}
 
             {activeTab === 'monitor' && (
-              <div className="pb-6">
+              <div className="pb-8">
                 <GPUResourceMonitor isGenerating={isGenerating} />
               </div>
             )}
