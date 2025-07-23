@@ -71,57 +71,54 @@ module.exports = Component; // NEVER MIX THESE
 - **Component Files**: Always `.jsx` with ES6 imports/exports
 - **Utility Files**: Always `.js` with ES6 modules
 
-### Exception: PostCSS Configuration
+## 🔧 CRITICAL: PostCSS Configuration - CORRECTED INSTRUCTIONS
+
+### **Understanding Package.json Module Configuration**
+
+**FIRST: Check your package.json file to determine the correct approach:**
+
+#### **Case 1: Standard CommonJS Project (NO "type": "module" in package.json)**
 ```javascript
-// ⚠️ EXCEPTION: postcss.config.js uses CommonJS (legacy requirement)
+// ✅ CORRECT: postcss.config.js (use .js extension)
 module.exports = {
   plugins: {
+    "tailwindcss/nesting": {},
     tailwindcss: {},
     autoprefixer: {},
   },
 };
 ```
 
-## 🔧 CRITICAL: PostCSS Configuration Fixes for Local Development
-
-### **Converting from Rocket.new to Local Development**
-
-When transitioning from Rocket.new to local development, you may encounter PostCSS configuration compatibility issues. Here are the required fixes:
-
-#### **Option 1: CommonJS Approach (.cjs extension)**
-```bash
-# Rename PostCSS config to use CommonJS extension
-git mv postcss.config.js postcss.config.cjs
-```
-
+#### **Case 2: ES Modules Project (HAS "type": "module" in package.json)**
 ```javascript
-// postcss.config.cjs
+// ✅ OPTION A: Use .cjs extension for CommonJS syntax
+// File: postcss.config.cjs
 module.exports = {
   plugins: {
+    "tailwindcss/nesting": {},
     tailwindcss: {},
     autoprefixer: {},
   },
-}
+};
 ```
 
-#### **Option 2: ES Modules Approach (package.json with "type": "module")**
-If your project uses `"type": "module"` in package.json:
-
 ```javascript
-// postcss.config.js (keep as .js)
+// ✅ OPTION B: Use ES modules syntax with .js extension
+// File: postcss.config.js
 export default {
   plugins: {
+    "tailwindcss/nesting": {},
     tailwindcss: {},
     autoprefixer: {},
   },
-}
+};
 ```
 
-#### **Current Project Configuration**
-This project uses the enhanced CommonJS configuration:
+### **Current Project Configuration**
+**This BitLink Web3 project does NOT have "type": "module" in package.json**, therefore:
 
 ```javascript
-// postcss.config.js (current implementation)
+// ✅ CORRECT: postcss.config.js (current implementation)
 module.exports = {
   plugins: {
     "tailwindcss/nesting": {},
@@ -133,30 +130,40 @@ module.exports = {
 
 ### **Troubleshooting PostCSS Issues**
 
-#### **Common Error Patterns**
+#### **Error: "To treat it as a CommonJS script, rename it to use the '.cjs' file extension"**
+**This error occurs when:**
+- Your package.json contains `"type": "module"`
+- Your postcss.config.js uses `module.exports` (CommonJS syntax)
+
+**Solution:**
 ```bash
-# If you see errors like:
-# "require() of ES modules is not supported"
-# "Cannot use import statement outside a module"
+# ONLY if your package.json has "type": "module"
+mv postcss.config.js postcss.config.cjs
 ```
 
-#### **Resolution Steps**
-1. **Check your package.json**: Look for `"type": "module"`
-2. **Choose appropriate config format**: Use `.cjs` for CommonJS or ES export for modules
-3. **Restart development server**: Always restart after PostCSS config changes
-4. **Clear build cache**: Delete `node_modules/.cache` if issues persist
+#### **Error: "Cannot use import statement outside a module"**
+**This error occurs when:**
+- Your package.json does NOT contain `"type": "module"`
+- Your postcss.config.js uses `export default` (ES modules syntax)
+
+**Solution:**
+```javascript
+// Change from ES modules to CommonJS
+// Replace: export default { ... }
+// With: module.exports = { ... }
+```
+
+#### **Resolution Checklist**
+1. **Check package.json first**: Look for `"type": "module"` 2. **If"type": "module" exists**: Use `.cjs` extension OR ES modules syntax 3. **If NO"type": "module"**: Use `.js` extension with `module.exports`
+4. **Restart development server**: Always restart after PostCSS config changes
+5. **Clear build cache**: Delete `node_modules/.cache` if issues persist
 
 #### **Project-Specific PostCSS Requirements**
-- **Tailwind CSS Nesting**: This project requires `tailwindcss/nesting` plugin
-- **Autoprefixer**: Essential for cross-browser CSS compatibility  
-- **File Extension**: Currently uses `.js` with `module.exports` (CommonJS)
-
-#### **Migration Checklist**
-- [ ] Verify PostCSS config loads without errors
-- [ ] Confirm Tailwind CSS classes compile correctly
-- [ ] Test CSS nesting functionality works
-- [ ] Validate autoprefixer adds vendor prefixes
-- [ ] Restart development server after config changes
+- **Current Project**: Uses CommonJS (no "type": "module" in package.json)
+- **File Name**: `postcss.config.js` (NOT .cjs)
+- **Syntax**: `module.exports = { ... }` (NOT export default)
+- **Tailwind CSS Nesting**: Required `tailwindcss/nesting` plugin
+- **Autoprefixer**: Essential for cross-browser CSS compatibility
 
 #### **After Making PostCSS Changes**
 ```bash
@@ -226,10 +233,10 @@ export default apiClient;
 
 ## 📋 Mandatory Checklist Before Code Generation
 
-- [ ] Using ES6 import/export syntax exclusively
+- [ ] Using ES6 import/export syntax exclusively (except PostCSS config)
 - [ ] Configuration files use correct extensions (.mjs for Vite)
-- [ ] No CommonJS require() statements
-- [ ] No module.exports usage (except postcss.config.js)
+- [ ] No CommonJS require() statements (except PostCSS config)
+- [ ] PostCSS config matches package.json module type
 - [ ] React components use functional syntax with hooks
 - [ ] Optional chaining (?.) for all nested property access
 - [ ] Proper error boundaries and loading states
@@ -239,11 +246,11 @@ export default apiClient;
 
 If you see any of these patterns, IMMEDIATELY reject and rewrite:
 1. `require()` statements in any file except postcss.config.js
-2. `module.exports` in any .js, .jsx, or .mjs file
+2. `module.exports` in any .js, .jsx, or .mjs file (except PostCSS config)
 3. Class components instead of functional components
 4. Direct property access without optional chaining
 5. Vite configuration in .js file instead of .mjs
-6. CommonJS syntax mixed with ES6 imports
+6. PostCSS config that doesn't match package.json module type
 
 ## 🔄 Migration Patterns
 
@@ -268,6 +275,7 @@ export default router;
 - **State**: Redux Toolkit for global state
 - **Routing**: React Router DOM 6.0.2
 - **Build**: Modern ES6 modules with .mjs configuration
+- **PostCSS**: CommonJS configuration (no "type": "module" in package.json)
 
 ### Required Dependencies (Always Check These Exist)
 - @vitejs/plugin-react: 4.3.4
@@ -276,4 +284,4 @@ export default router;
 - tailwindcss: 3.4.6
 - @reduxjs/toolkit: ^2.6.1
 
-Remember: This is a MODERN Web3 project. Always use cutting-edge patterns, never fall back to legacy CommonJS syntax!
+Remember: This is a MODERN Web3 project using CommonJS for PostCSS configuration. Always use cutting-edge patterns, never fall back to legacy CommonJS syntax (except for PostCSS config)!
