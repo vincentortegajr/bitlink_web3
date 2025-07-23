@@ -9,6 +9,14 @@
 - [ ] **Vite Config Extension** - Always .mjs, never .js
 - [ ] **Component Exports** - Every component has export default
 - [ ] **Named Imports** - Use destructuring for specific exports
+- [ ] **PostCSS Config Exception** - Verify postcss.config.js uses correct format
+
+#### PostCSS Configuration Validation
+- [ ] **Config File Format** - Check if using .cjs or .js with proper module syntax
+- [ ] **Plugin Loading** - Verify tailwindcss and autoprefixer load correctly
+- [ ] **Nesting Support** - Confirm tailwindcss/nesting plugin is included
+- [ ] **Development Server** - Restart after any PostCSS config changes
+- [ ] **Build Process** - Ensure CSS compilation works in production build
 
 #### React Component Validation  
 - [ ] **Functional Components** - Never class components
@@ -41,6 +49,50 @@ import { Button } from '../components/ui/Button';
 
 // ❌ FAIL: CommonJS requires  
 const React = require('react'); // REJECT CODE
+
+// ⚠️ EXCEPTION: PostCSS config file only
+// postcss.config.js or postcss.config.cjs
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+### Gate 1.5: PostCSS Configuration Check
+```javascript
+// ✅ PASS: Correct PostCSS CommonJS format
+// postcss.config.js
+module.exports = {
+  plugins: {
+    "tailwindcss/nesting": {},
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+
+// ✅ PASS: Correct PostCSS ES modules format (if package.json has "type": "module")
+// postcss.config.js
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+
+// ✅ PASS: CommonJS with .cjs extension
+// postcss.config.cjs
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+
+// ❌ FAIL: Mixed module syntax in PostCSS
+import postcss from 'postcss';
+module.exports = { ... }; // INCONSISTENT
 ```
 
 ### Gate 2: Component Structure Check
@@ -88,6 +140,41 @@ module.exports = Component; // NEVER DO THIS
 // ✅ CORRECT: Consistent ES6
 import React from 'react';
 export default Component;
+
+// ⚠️ EXCEPTION: PostCSS config file only
+// This is the ONLY file where module.exports is acceptable
+// postcss.config.js
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+```
+
+### Pitfall 1.5: PostCSS Configuration Issues
+```javascript
+// ❌ DANGER: Wrong PostCSS config for module type
+// If package.json has "type": "module" but using:
+module.exports = { ... }; // Will cause errors
+
+// ✅ CORRECT: Match package.json module type
+// For "type": "module" in package.json:
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+
+// ✅ CORRECT: Use .cjs extension to force CommonJS
+// postcss.config.cjs
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
 ```
 
 ### Pitfall 2: Missing Error Boundaries
@@ -232,5 +319,47 @@ useEffect(() => {
 8. Missing error handling for async operations
 9. Inaccessible interactive elements
 10. Mixed ES6/CommonJS module syntax
+11. **PostCSS config format incompatible with package.json module type**
+12. **Missing PostCSS restart after configuration changes**
 
 Remember: This is a MODERN Web3 project. Code quality standards are non-negotiable!
+
+## 🔧 PostCSS Troubleshooting Guide
+
+### Common PostCSS Errors and Solutions
+
+#### Error: "require() of ES modules is not supported"
+```bash
+# Solution: Use .cjs extension or ES module export
+git mv postcss.config.js postcss.config.cjs
+# OR update to ES module format if package.json has "type": "module"
+```
+
+#### Error: "Cannot use import statement outside a module"
+```bash
+# Solution: Ensure package.json module type matches config format
+# Either add "type": "module" to package.json
+# OR use module.exports instead of export default
+```
+
+#### Error: Tailwind classes not working after config change
+```bash
+# Solution: Restart development server
+npm run dev
+# Clear cache if needed
+rm -rf node_modules/.cache
+```
+
+### PostCSS Configuration Testing
+```bash
+# Test PostCSS config loads correctly
+npx postcss --version
+
+# Verify Tailwind CSS compilation
+npm run build
+
+# Check for CSS errors in browser console
+# Look for: Failed to load PostCSS config
+```
+
+Remember: This is a MODERN Web3 project. PostCSS configuration must be compatible with the chosen module system!

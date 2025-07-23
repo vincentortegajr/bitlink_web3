@@ -82,6 +82,88 @@ module.exports = {
 };
 ```
 
+## 🔧 CRITICAL: PostCSS Configuration Fixes for Local Development
+
+### **Converting from Rocket.new to Local Development**
+
+When transitioning from Rocket.new to local development, you may encounter PostCSS configuration compatibility issues. Here are the required fixes:
+
+#### **Option 1: CommonJS Approach (.cjs extension)**
+```bash
+# Rename PostCSS config to use CommonJS extension
+git mv postcss.config.js postcss.config.cjs
+```
+
+```javascript
+// postcss.config.cjs
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+#### **Option 2: ES Modules Approach (package.json with "type": "module")**
+If your project uses `"type": "module"` in package.json:
+
+```javascript
+// postcss.config.js (keep as .js)
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+#### **Current Project Configuration**
+This project uses the enhanced CommonJS configuration:
+
+```javascript
+// postcss.config.js (current implementation)
+module.exports = {
+  plugins: {
+    "tailwindcss/nesting": {},
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+```
+
+### **Troubleshooting PostCSS Issues**
+
+#### **Common Error Patterns**
+```bash
+# If you see errors like:
+# "require() of ES modules is not supported"
+# "Cannot use import statement outside a module"
+```
+
+#### **Resolution Steps**
+1. **Check your package.json**: Look for `"type": "module"`
+2. **Choose appropriate config format**: Use `.cjs` for CommonJS or ES export for modules
+3. **Restart development server**: Always restart after PostCSS config changes
+4. **Clear build cache**: Delete `node_modules/.cache` if issues persist
+
+#### **Project-Specific PostCSS Requirements**
+- **Tailwind CSS Nesting**: This project requires `tailwindcss/nesting` plugin
+- **Autoprefixer**: Essential for cross-browser CSS compatibility  
+- **File Extension**: Currently uses `.js` with `module.exports` (CommonJS)
+
+#### **Migration Checklist**
+- [ ] Verify PostCSS config loads without errors
+- [ ] Confirm Tailwind CSS classes compile correctly
+- [ ] Test CSS nesting functionality works
+- [ ] Validate autoprefixer adds vendor prefixes
+- [ ] Restart development server after config changes
+
+#### **After Making PostCSS Changes**
+```bash
+# Always restart the development server
+npm run dev
+```
+
 ## 🎯 Modern Development Patterns
 
 ### React Components
