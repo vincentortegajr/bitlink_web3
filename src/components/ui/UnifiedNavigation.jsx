@@ -443,13 +443,13 @@ const UnifiedNavigation = () => {
 
               {/* CRITICAL FIX: Enhanced AI Tools Dropdown with MAXIMUM CONTRAST */}
               {showAIStudio && (
-                <div className="absolute top-full right-0 mt-2 w-80 bg-white/99 dark:bg-slate-950/99 backdrop-blur-xl border-2 border-slate-300/80 dark:border-slate-600/80 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in slide-in-from-top-2 duration-200">
-                  <div className="p-4 border-b border-slate-200/60 dark:border-slate-700/60 bg-slate-50/90 dark:bg-slate-800/75">
-                    <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 contrast-more:text-black contrast-more:font-extrabold text-shadow-lg">
+                <div className="absolute top-full right-0 mt-2 w-80 glass-morphism dark:glass-morphism-dark rounded-2xl shadow-2xl overflow-hidden z-50 animate-in slide-in-from-top-2 duration-200">
+                  <div className="p-4 border-b border-slate-200/60 dark:border-slate-700/60 bg-slate-50/95 dark:bg-slate-800/95">
+                    <h3 className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 max-contrast-text dark:max-contrast-text-dark no-text-shadow">
                       <Icon name="Sparkles" size={16} className="text-emerald-600 dark:text-emerald-400" />
                       AI Creative Studio
                     </h3>
-                    <p className="text-sm text-slate-800 dark:text-slate-200 mt-1 contrast-more:text-black contrast-more:font-bold text-shadow">
+                    <p className="text-sm text-slate-800 dark:text-slate-200 mt-1 max-contrast-text dark:max-contrast-text-dark no-text-shadow">
                       AI tools for content creation
                     </p>
                   </div>
@@ -467,7 +467,7 @@ const UnifiedNavigation = () => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-slate-900 dark:text-white text-sm truncate contrast-more:text-black contrast-more:font-extrabold text-shadow-lg">
+                              <span className="font-extrabold text-slate-900 dark:text-white text-sm truncate max-contrast-text dark:max-contrast-text-dark no-text-shadow">
                                 {tool.name}
                               </span>
                               {tool.isNew && (
@@ -476,14 +476,14 @@ const UnifiedNavigation = () => {
                                 </span>
                               )}
                             </div>
-                            <p className="text-sm text-slate-700 dark:text-slate-300 truncate contrast-more:text-black contrast-more:font-bold">
+                            <p className="text-sm text-slate-700 dark:text-slate-300 truncate max-contrast-text dark:max-contrast-text-dark no-text-shadow">
                               {tool.description}
                             </p>
                           </div>
                           <Icon 
                             name="ChevronRight" 
                             size={16} 
-                            className="text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors shrink-0 contrast-more:text-black" 
+                            className="text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors shrink-0 max-contrast-text dark:max-contrast-text-dark" 
                           />
                         </button>
                       ))}
@@ -576,7 +576,7 @@ const UnifiedNavigation = () => {
       {/* CRITICAL FIX: AI Studio Mobile Slide-Up Panel - MAXIMUM CONTRAST AND ACCESSIBILITY */}
       {showAIStudio && (
         <div 
-          className="lg:hidden fixed inset-0 bg-black/70 dark:bg-black/80 z-[60] flex items-end backdrop-blur-sm"
+          className="lg:hidden fixed inset-0 bg-black/70 dark:bg-black/80 z-[60] flex items-end"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowAIStudio(false);
@@ -586,16 +586,16 @@ const UnifiedNavigation = () => {
           aria-modal="true"
           aria-label="AI Studio Tools"
         >
-          <div className="w-full bg-white/98 dark:bg-slate-950/98 backdrop-blur-xl rounded-t-3xl max-h-[85vh] overflow-hidden border-t border-slate-200/60 dark:border-slate-700/60 shadow-2xl" data-ai-studio-container>
-            <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/80 dark:bg-slate-800/50">
+          <div className="w-full glass-morphism dark:glass-morphism-dark rounded-t-3xl max-h-[85vh] overflow-hidden border-t border-slate-200/60 dark:border-slate-700/60 shadow-2xl" data-ai-studio-container>
+            <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/95 dark:bg-slate-800/95">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
                     <Icon name="Sparkles" size={16} className="text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white contrast-more:text-black contrast-more:font-extrabold text-shadow">AI Studio</h2>
-                    <p className="text-sm text-slate-700 dark:text-slate-300 contrast-more:text-black contrast-more:font-medium">
+                    <h2 className="text-lg font-extrabold text-slate-900 dark:text-white max-contrast-text dark:max-contrast-text-dark no-text-shadow">AI Studio</h2>
+                    <p className="text-sm text-slate-700 dark:text-slate-300 max-contrast-text dark:max-contrast-text-dark no-text-shadow">
                       AI tools for content creation
                     </p>
                   </div>
@@ -604,7 +604,7 @@ const UnifiedNavigation = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowAIStudio(false)}
-                  className="min-h-[48px] min-w-[48px] hover:scale-105 transition-transform duration-300 touch-manipulation text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 contrast-more:text-black contrast-more:hover:bg-slate-300"
+                  className="min-h-[48px] min-w-[48px] hover:scale-105 transition-transform duration-300 touch-manipulation text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 max-contrast-text dark:max-contrast-text-dark"
                   iconName="X"
                   aria-label="Close AI Studio"
                 />
@@ -618,7 +618,7 @@ const UnifiedNavigation = () => {
                   <button
                     key={tool.id}
                     onClick={() => handleNavigation(tool.route, 'ai')}
-                    className="flex items-center gap-4 p-4 bg-slate-50/95 dark:bg-slate-800/75 backdrop-blur-sm rounded-2xl border-2 border-slate-200/70 dark:border-slate-600/70 hover:bg-slate-100/80 dark:hover:bg-slate-700/80 active:bg-slate-200/90 dark:active:bg-slate-600/90 transition-all duration-300 text-left group hover:scale-[1.02] w-full touch-manipulation focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950 min-h-[76px] shadow-sm hover:shadow-md"
+                    className="flex items-center gap-4 p-4 bg-slate-50/95 dark:bg-slate-800/95 rounded-2xl border-2 border-slate-200/70 dark:border-slate-600/70 hover:bg-slate-100/80 dark:hover:bg-slate-700/80 active:bg-slate-200/90 dark:active:bg-slate-600/90 transition-all duration-300 text-left group hover:scale-[1.02] w-full touch-manipulation focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950 min-h-[76px] shadow-sm hover:shadow-md"
                     aria-label={`Open ${tool.name}: ${tool.description}`}
                   >
                     <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r shrink-0 shadow-lg", tool.gradient)}>
@@ -626,7 +626,7 @@ const UnifiedNavigation = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-extrabold text-slate-900 dark:text-white truncate contrast-more:text-black contrast-more:font-black text-shadow-lg">
+                        <h3 className="font-extrabold text-slate-900 dark:text-white truncate max-contrast-text dark:max-contrast-text-dark no-text-shadow">
                           {tool.name}
                         </h3>
                         {tool.isNew && (
@@ -635,14 +635,14 @@ const UnifiedNavigation = () => {
                           </span>
                         )}
                       </div>
-                      <p className="text-slate-700 dark:text-slate-300 text-sm truncate contrast-more:text-black contrast-more:font-bold">
+                      <p className="text-slate-700 dark:text-slate-300 text-sm truncate max-contrast-text dark:max-contrast-text-dark no-text-shadow">
                         {tool.description}
                       </p>
                     </div>
                     <Icon 
                       name="ChevronRight" 
                       size={16} 
-                      className="text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors shrink-0 contrast-more:text-black" 
+                      className="text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors shrink-0 max-contrast-text dark:max-contrast-text-dark" 
                     />
                   </button>
                 ))}
