@@ -260,24 +260,24 @@ const AINavigationHub = () => {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="px-3 py-2 bg-background border border-border rounded-lg text-text-primary"
+                className="px-3 py-2 bg-background border border-border rounded-lg dropdown-mobile-enhanced dark:dropdown-mobile-enhanced-dark max-contrast-text dark:max-contrast-text-dark no-text-shadow no-backdrop-blur"
               >
-                <option value="all">All Tools</option>
-                <option value="text-to-image">Text-to-Image</option>
-                <option value="image-to-image">Image Transform</option>
-                <option value="image-to-video">Image-to-Video</option>
-                <option value="video-to-lipsync">Video Lip Sync</option>
+                <option value="all" className="dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">All Tools</option>
+                <option value="text-to-image" className="dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">Text-to-Image</option>
+                <option value="image-to-image" className="dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">Image Transform</option>
+                <option value="image-to-video" className="dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">Image-to-Video</option>
+                <option value="video-to-lipsync" className="dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">Video Lip Sync</option>
               </select>
               
               {/* Sort */}
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 bg-background border border-border rounded-lg text-text-primary"
+                className="px-3 py-2 bg-background border border-border rounded-lg dropdown-mobile-enhanced dark:dropdown-mobile-enhanced-dark max-contrast-text dark:max-contrast-text-dark no-text-shadow no-backdrop-blur"
               >
-                <option value="recent">Recent</option>
-                <option value="popular">Popular</option>
-                <option value="trending">Trending</option>
+                <option value="recent" className="dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">Recent</option>
+                <option value="popular" className="dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">Popular</option>
+                <option value="trending" className="dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">Trending</option>
               </select>
             </div>
           </div>

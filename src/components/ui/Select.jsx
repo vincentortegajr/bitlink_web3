@@ -104,7 +104,7 @@ const Select = React.forwardRef(({
                 <label
                     htmlFor={selectId}
                     className={cn(
-                        "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2 block",
+                        "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2 block max-contrast-text dark:max-contrast-text-dark",
                         error ? "text-destructive" : "text-foreground"
                     )}
                 >
@@ -119,7 +119,7 @@ const Select = React.forwardRef(({
                     id={selectId}
                     type="button"
                     className={cn(
-                        "flex h-10 w-full items-center justify-between rounded-md border border-input bg-white text-black px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                        "flex h-10 w-full items-center justify-between rounded-md border border-input px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dropdown-mobile-enhanced dark:dropdown-mobile-enhanced-dark max-contrast-text dark:max-contrast-text-dark no-text-shadow no-backdrop-blur",
                         error && "border-destructive focus:ring-destructive",
                         !hasValue && "text-muted-foreground"
                     )}
@@ -129,7 +129,7 @@ const Select = React.forwardRef(({
                     aria-haspopup="listbox"
                     {...props}
                 >
-                    <span className="truncate">{getSelectedDisplay()}</span>
+                    <span className="truncate max-contrast-text dark:max-contrast-text-dark no-text-shadow">{getSelectedDisplay()}</span>
 
                     <div className="flex items-center gap-1">
                         {loading && (
@@ -150,7 +150,7 @@ const Select = React.forwardRef(({
                             </Button>
                         )}
 
-                        <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+                        <ChevronDown className={cn("h-4 w-4 transition-transform max-contrast-text dark:max-contrast-text-dark", isOpen && "rotate-180")} />
                     </div>
                 </button>
 
@@ -174,7 +174,7 @@ const Select = React.forwardRef(({
 
                 {/* Dropdown */}
                 {isOpen && (
-                    <div className="absolute z-50 w-full mt-1 bg-white text-black border border-border rounded-md shadow-md">
+                    <div className="absolute z-50 w-full mt-1 dropdown-contrast-fix dark:dropdown-contrast-fix-dark border rounded-md shadow-lg no-backdrop-blur">
                         {searchable && (
                             <div className="p-2 border-b">
                                 <div className="relative">
@@ -183,7 +183,7 @@ const Select = React.forwardRef(({
                                         placeholder="Search options..."
                                         value={searchTerm}
                                         onChange={handleSearchChange}
-                                        className="pl-8"
+                                        className="pl-8 max-contrast-text dark:max-contrast-text-dark no-text-shadow"
                                     />
                                 </div>
                             </div>
@@ -191,7 +191,7 @@ const Select = React.forwardRef(({
 
                         <div className="py-1 max-h-60 overflow-auto">
                             {filteredOptions.length === 0 ? (
-                                <div className="px-3 py-2 text-sm text-muted-foreground">
+                                <div className="px-3 py-2 text-sm dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark">
                                     {searchTerm ? 'No options found' : 'No options available'}
                                 </div>
                             ) : (
@@ -199,18 +199,18 @@ const Select = React.forwardRef(({
                                     <div
                                         key={option.value}
                                         className={cn(
-                                            "relative flex cursor-pointer select-none items-center rounded-sm px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
-                                            isSelected(option.value) && "bg-primary text-primary-foreground",
+                                            "relative flex cursor-pointer select-none items-center rounded-sm px-3 py-2 text-sm outline-none dropdown-mobile-option dark:dropdown-mobile-option-dark dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark hover:dropdown-item-hover dark:hover:dropdown-item-hover-dark no-text-shadow",
+                                            isSelected(option.value) && "bg-primary text-primary-foreground font-semibold",
                                             option.disabled && "pointer-events-none opacity-50"
                                         )}
                                         onClick={() => !option.disabled && handleOptionSelect(option)}
                                     >
-                                        <span className="flex-1">{option.label}</span>
+                                        <span className="flex-1 dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">{option.label}</span>
                                         {multiple && isSelected(option.value) && (
                                             <Check className="h-4 w-4" />
                                         )}
                                         {option.description && (
-                                            <span className="text-xs text-muted-foreground ml-2">
+                                            <span className="text-xs text-muted-foreground ml-2 dropdown-text-max-contrast dark:dropdown-text-max-contrast-dark no-text-shadow">
                                                 {option.description}
                                             </span>
                                         )}
@@ -223,13 +223,13 @@ const Select = React.forwardRef(({
             </div>
 
             {description && !error && (
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-1 max-contrast-text dark:max-contrast-text-dark no-text-shadow">
                     {description}
                 </p>
             )}
 
             {error && (
-                <p className="text-sm text-destructive mt-1">
+                <p className="text-sm text-destructive mt-1 max-contrast-text dark:max-contrast-text-dark no-text-shadow">
                     {error}
                 </p>
             )}
