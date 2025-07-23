@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Header from '../../components/ui/Header';
 import QuickActionToolbar from '../../components/ui/QuickActionToolbar';
 import NavigationBreadcrumbs from '../../components/ui/NavigationBreadcrumbs';
 import Icon from '../../components/AppIcon';
@@ -80,7 +79,6 @@ const CryptoPaymentSetup = () => {
   if (isSetupComplete) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
         <QuickActionToolbar />
         
         <main className="container mx-auto px-4 lg:px-6 py-8">
@@ -195,7 +193,6 @@ const CryptoPaymentSetup = () => {
 
   return (
     <div className="mobile-full-height mobile-viewport-fix bg-background">
-      <Header />
       {/* OPTIMIZED: Move QuickActionToolbar to save vertical space on mobile */}
       <div className="hidden lg:block">
         <QuickActionToolbar />
@@ -206,7 +203,7 @@ const CryptoPaymentSetup = () => {
         
         <div className="max-w-6xl mx-auto">
           {/* OPTIMIZED: Compact header for mobile */}
-          <div className="text-center mb-6 lg:mb-8">
+          <div className="text-center mb-4 lg:mb-6">
             <h1 className="text-2xl lg:text-3xl font-bold text-text-primary mb-2">
               Crypto Payment Setup
             </h1>
@@ -216,7 +213,7 @@ const CryptoPaymentSetup = () => {
           </div>
 
           {/* OPTIMIZED: Compact progress indicator */}
-          <div className="mb-6 lg:mb-8">
+          <div className="mb-4 lg:mb-6">
             <StepProgress 
               currentStep={currentStep}
               totalSteps={steps.length}
@@ -224,8 +221,8 @@ const CryptoPaymentSetup = () => {
             />
           </div>
 
-          {/* OPTIMIZED: Main content with better mobile spacing */}
-          <div className="bg-card border border-border rounded-lg p-4 lg:p-6 lg:p-8 mb-6 lg:mb-8">
+          {/* OPTIMIZED: Main content with better mobile spacing and reduced height */}
+          <div className="bg-card border border-border rounded-lg p-3 lg:p-6 mb-4 lg:mb-6 max-h-[60vh] lg:max-h-none overflow-y-auto mobile-scroll-container">
             <WalletConnectionStep
               onNext={handleNext}
               isActive={currentStep === 0}
@@ -256,43 +253,52 @@ const CryptoPaymentSetup = () => {
             />
           </div>
 
-          {/* OPTIMIZED: Compact help section */}
-          <div className="bg-muted rounded-lg p-4 lg:p-6">
-            <div className="flex items-start space-x-4">
-              <Icon name="HelpCircle" size={20} className="text-primary mt-1 shrink-0" />
+          {/* OPTIMIZED: Compact help section with better mobile button layout */}
+          <div className="bg-muted rounded-lg p-3 lg:p-4 sticky bottom-20 lg:bottom-0">
+            <div className="flex items-start space-x-3">
+              <Icon name="HelpCircle" size={18} className="text-primary mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
-                <h3 className="text-base lg:text-lg font-medium text-text-primary mb-2">Need Help?</h3>
-                <p className="text-sm text-text-secondary mb-4">
-                  Setting up crypto payments can be complex. Our support team is here to help you every step of the way.
+                <h3 className="text-sm lg:text-base font-medium text-text-primary mb-1">Need Help?</h3>
+                <p className="text-xs text-text-secondary mb-3">
+                  Our support team is here to help you every step of the way.
                 </p>
-                {/* OPTIMIZED: Better button layout for mobile */}
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                {/* OPTIMIZED: Horizontal scrolling button layout for mobile */}
+                <div className="flex gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent pb-2">
                   <Button
                     variant="outline"
                     size="sm"
                     iconName="Book"
                     iconPosition="left"
-                    className="justify-center sm:justify-start"
+                    className="button-optimized min-h-[44px] min-w-[80px] px-3 text-xs whitespace-nowrap flex-shrink-0"
                   >
-                    Documentation
+                    Docs
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     iconName="MessageCircle"
                     iconPosition="left"
-                    className="justify-center sm:justify-start"
+                    className="button-optimized min-h-[44px] min-w-[80px] px-3 text-xs whitespace-nowrap flex-shrink-0"
                   >
-                    Live Chat
+                    Chat Support
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     iconName="Mail"
                     iconPosition="left"
-                    className="justify-center sm:justify-start"
+                    className="button-optimized min-h-[44px] min-w-[80px] px-3 text-xs whitespace-nowrap flex-shrink-0"
                   >
-                    Email Support
+                    Email Help
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    iconName="Video"
+                    iconPosition="left"
+                    className="button-optimized min-h-[44px] min-w-[80px] px-3 text-xs whitespace-nowrap flex-shrink-0"
+                  >
+                    Tutorials
                   </Button>
                 </div>
               </div>

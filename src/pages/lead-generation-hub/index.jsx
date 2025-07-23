@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
-import Header from '../../components/ui/Header';
 import QuickActionToolbar from '../../components/ui/QuickActionToolbar';
 import NotificationCenter from '../../components/ui/NotificationCenter';
 import NavigationBreadcrumbs from '../../components/ui/NavigationBreadcrumbs';
@@ -357,7 +356,6 @@ const LeadGenerationHub = () => {
 
   return (
     <div className="mobile-full-height mobile-viewport-fix bg-background">
-      <Header />
       <div className="hidden lg:block">
         <QuickActionToolbar />
       </div>
@@ -380,16 +378,32 @@ const LeadGenerationHub = () => {
             <div className="hidden lg:block">
               <NotificationCenter />
             </div>
-            <Button
-              onClick={handleCreateForm}
-              iconName="Plus"
-              iconPosition="left"
-              className="flex-shrink-0"
-            >
-              <span className="hidden sm:inline">Create Form</span>
-              <span className="sm:hidden">Create</span>
-            </Button>
           </div>
+        </div>
+
+        <div className="lg:hidden fixed bottom-20 right-4 z-40">
+          <Button
+            onClick={handleCreateForm}
+            iconName="Plus"
+            iconPosition="left"
+            className="button-optimized min-h-[56px] min-w-[56px] px-4 font-bold shadow-2xl hover:shadow-3xl transition-all duration-300 bg-primary hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full lg:rounded-lg"
+            size="default"
+            aria-label="Create new lead generation form"
+          >
+            <span className="hidden sm:inline ml-2">Create Form</span>
+          </Button>
+        </div>
+
+        <div className="hidden lg:flex justify-end mb-6">
+          <Button
+            onClick={handleCreateForm}
+            iconName="Plus"
+            iconPosition="left"
+            className="button-optimized min-h-[48px] px-6 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            size="default"
+          >
+            Create Form
+          </Button>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-6 lg:mb-8">
@@ -407,7 +421,7 @@ const LeadGenerationHub = () => {
         </div>
 
         <div className="bg-surface border border-border rounded-lg shadow-subtle">
-          <div className="border-b border-border">
+          <div className="border-b border-border sticky top-16 lg:top-0 bg-surface/95 backdrop-blur-sm z-10">
             <div className="flex space-x-4 lg:space-x-8 px-4 lg:px-6 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('forms')}
@@ -477,7 +491,12 @@ const LeadGenerationHub = () => {
                       }
                     </p>
                     {!searchTerm && (
-                      <Button onClick={handleCreateForm} iconName="Plus" iconPosition="left">
+                      <Button 
+                        onClick={handleCreateForm} 
+                        iconName="Plus" 
+                        iconPosition="left"
+                        className="button-optimized min-h-[48px] px-6 font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                      >
                         Create Your First Form
                       </Button>
                     )}

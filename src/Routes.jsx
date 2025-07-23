@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
 import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -20,14 +20,52 @@ import AIImageRealismModel from "pages/ai-image-realism-model";
 import AIChatAssistant from "pages/ai-chat-assistant";
 import NotFound from "pages/NotFound";
 
+// CRITICAL FIX: Enhanced mobile viewport height management
+const setViewportHeight = () => {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+};
+
 const Routes = () => {
+  // CRITICAL FIX: Mobile viewport height management
+  React.useEffect(() => {
+    setViewportHeight();
+    
+    let resizeTimeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        setViewportHeight();
+      }, 100);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(setViewportHeight, 100);
+    });
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', setViewportHeight);
+      clearTimeout(resizeTimeout);
+    };
+  }, []);
+
   return (
     <BrowserRouter>
       <ErrorBoundary>
         <ScrollToTop />
-        {/* UNIFIED NAVIGATION - Single source of truth */}
+        {/* UNIFIED NAVIGATION - Single source of truth with enhanced mobile positioning */}
         <UnifiedNavigation />
-        <div className="pt-16"> {/* Account for fixed header */}
+        
+        {/* CRITICAL FIX: Enhanced main content container with proper spacing */}
+        <main 
+          className="pt-16 min-h-screen mobile-viewport-fix"
+          style={{
+            paddingBottom: 'var(--mobile-total-bottom)',
+            minHeight: 'calc(var(--vh, 1vh) * 100)',
+          }}
+        >
           <RouterRoutes>
             {/* RESTORED HIERARCHY: Web3 LinkTree as PRIMARY platform with AI access */}
             <Route path="/" element={<ProfileBuilderDashboard />} />
@@ -52,7 +90,7 @@ const Routes = () => {
             {/* 404 Handler */}
             <Route path="*" element={<NotFound />} />
           </RouterRoutes>
-        </div>
+        </main>
       </ErrorBoundary>
     </BrowserRouter>
   );

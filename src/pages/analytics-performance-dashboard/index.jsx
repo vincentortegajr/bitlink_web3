@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
-import Header from '../../components/ui/Header';
+
+
 import QuickActionToolbar from '../../components/ui/QuickActionToolbar';
 import NotificationCenter from '../../components/ui/NotificationCenter';
 import NavigationBreadcrumbs from '../../components/ui/NavigationBreadcrumbs';
 
-// Import all components
+// Import component files
 import MetricCard from './components/MetricCard';
 import PerformanceChart from './components/PerformanceChart';
-import PaymentAnalytics from './components/PaymentAnalytics';
-import LeadMetrics from './components/LeadMetrics';
 import SocialLinkPerformance from './components/SocialLinkPerformance';
+import LeadMetrics from './components/LeadMetrics';
+import PaymentAnalytics from './components/PaymentAnalytics';
 import ABTestingResults from './components/ABTestingResults';
 import GoalTracking from './components/GoalTracking';
 import ExportReports from './components/ExportReports';
@@ -112,12 +113,14 @@ const AnalyticsPerformanceDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <QuickActionToolbar />
+    <div className="mobile-full-height mobile-viewport-fix bg-background">
+      {/* Remove Header component - CRITICAL FIX */}
+      <div className="hidden lg:block">
+        <QuickActionToolbar />
+      </div>
       
-      <div className="px-4 lg:px-6 py-6 pb-20 md:pb-6">
-        <NavigationBreadcrumbs customBreadcrumbs={breadcrumbs} />
+      <div className="px-4 lg:px-6 py-4 lg:py-6 pb-mobile-safe">
+        <NavigationBreadcrumbs />
         
         {/* Page Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">

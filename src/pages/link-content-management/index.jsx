@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
-import Header from '../../components/ui/Header';
+
+
+
 import QuickActionToolbar from '../../components/ui/QuickActionToolbar';
-import NavigationBreadcrumbs from '../../components/ui/NavigationBreadcrumbs';
 import NotificationCenter from '../../components/ui/NotificationCenter';
+import NavigationBreadcrumbs from '../../components/ui/NavigationBreadcrumbs';
+
+// Import tab components
 import TabNavigation from './components/TabNavigation';
 import SocialLinksTab from './components/SocialLinksTab';
-import EbooksTab from './components/EbooksTab';
 import LeadMagnetsTab from './components/LeadMagnetsTab';
+import EbooksTab from './components/EbooksTab';
 import BulkActionsToolbar from './components/BulkActionsToolbar';
 
 const LinkContentManagement = () => {
@@ -334,18 +337,15 @@ const LinkContentManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>Link & Content Management - BitLink Web3</title>
-        <meta name="description" content="Manage your social links, ebooks, and lead magnets from a centralized dashboard. Organize, track, and optimize your digital content." />
-      </Helmet>
-
-      <Header />
-      <QuickActionToolbar />
-
-      <main className="container mx-auto px-4 lg:px-6 py-6 pb-24 sm:pb-6">
+    <div className="mobile-full-height mobile-viewport-fix bg-background">
+      {/* Remove Header component - CRITICAL FIX */}
+      <div className="hidden lg:block">
+        <QuickActionToolbar />
+      </div>
+      
+      <div className="px-4 lg:px-6 py-4 lg:py-6 pb-mobile-safe">
         <NavigationBreadcrumbs />
-
+        
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
           <div>
@@ -382,7 +382,7 @@ const LinkContentManagement = () => {
         <div className="animate-fade-in">
           {renderTabContent()}
         </div>
-      </main>
+      </div>
     </div>
   );
 };
