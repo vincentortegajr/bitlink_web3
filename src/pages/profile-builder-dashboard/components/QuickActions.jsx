@@ -125,7 +125,7 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
             <button
               key={action.id}
               onClick={() => handleActionClick(action)}
-              className={`p-3 rounded-full border shadow-medium transition-smooth hover:scale-110 glass-button liquid-glass-hover ${getColorClasses(action.color)}`}
+              className={`p-3 rounded-full border shadow-medium transition-smooth hover:scale-110 ${getColorClasses(action.color)}`}
               title={action.title}
             >
               <Icon name={action.icon} size={20} />
@@ -137,35 +137,35 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
       {/* Mobile Quick Actions */}
       {isVisible && (
         <div className="lg:hidden fixed inset-0 bg-black/50 z-50 flex items-end">
-          <div className="w-full glass-panel rounded-t-lg max-h-[80vh] flex flex-col animate-fade-in">
-            <div className="p-4 border-b border-white/20 glass-morphism">
+          <div className="w-full bg-surface rounded-t-lg max-h-[80vh] flex flex-col animate-fade-in">
+            <div className="p-4 border-b border-border">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-text-primary glass-text-readable">Quick Actions</h2>
+                <h2 className="text-lg font-semibold text-text-primary">Quick Actions</h2>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-muted rounded-md transition-smooth glass-button liquid-glass-hover"
+                  className="p-2 hover:bg-muted rounded-md transition-smooth"
                 >
                   <Icon name="X" size={20} />
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 liquid-glass-light">
+            <div className="flex-1 overflow-y-auto p-4">
               {!activeAction ? (
                 <div className="grid grid-cols-1 gap-3">
                   {quickActions.map((action) => (
                     <button
                       key={action.id}
                       onClick={() => handleActionClick(action)}
-                      className="p-4 border border-white/20 rounded-lg text-left hover:border-primary/50 transition-smooth glass-card liquid-glass-hover"
+                      className="p-4 border border-border rounded-lg text-left hover:border-primary/50 transition-smooth"
                     >
                       <div className="flex items-start space-x-3">
-                        <div className={`p-2 rounded-md border glass-button ${getColorClasses(action.color)}`}>
+                        <div className={`p-2 rounded-md border ${getColorClasses(action.color)}`}>
                           <Icon name={action.icon} size={20} />
                         </div>
                         <div>
-                          <h3 className="font-medium text-text-primary glass-text-readable">{action.title}</h3>
-                          <p className="text-sm text-text-secondary mt-1 glass-text-overlay">{action.description}</p>
+                          <h3 className="font-medium text-text-primary">{action.title}</h3>
+                          <p className="text-sm text-text-secondary mt-1">{action.description}</p>
                         </div>
                       </div>
                     </button>
@@ -176,11 +176,11 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => setActiveAction(null)}
-                      className="p-2 hover:bg-muted rounded-md transition-smooth glass-button liquid-glass-hover"
+                      className="p-2 hover:bg-muted rounded-md transition-smooth"
                     >
                       <Icon name="ArrowLeft" size={16} />
                     </button>
-                    <h3 className="text-lg font-medium text-text-primary glass-text-readable">{activeAction.title}</h3>
+                    <h3 className="text-lg font-medium text-text-primary">{activeAction.title}</h3>
                   </div>
 
                   <div className="space-y-4">
@@ -188,13 +188,13 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
                       <div key={field.name}>
                         {field.type === 'select' ? (
                           <div>
-                            <label className="block text-sm font-medium text-text-primary mb-2 glass-text-readable">
+                            <label className="block text-sm font-medium text-text-primary mb-2">
                               {field.label}
                             </label>
                             <select
                               value={formData[field.name] || ''}
                               onChange={(e) => handleInputChange(field.name, e.target.value)}
-                              className="w-full px-3 py-2 border border-white/20 rounded-md glass-morphism text-text-primary glass-text-readable"
+                              className="w-full px-3 py-2 border border-border rounded-md bg-surface text-text-primary"
                             >
                               <option value="">Select {field.label}</option>
                               {field.options.map((option) => (
@@ -211,7 +211,6 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
                             value={formData[field.name] || ''}
                             onChange={(e) => handleInputChange(field.name, e.target.value)}
                             placeholder={field.placeholder}
-                            className="glass-morphism glass-text-readable"
                           />
                         )}
                       </div>
@@ -222,14 +221,14 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
                     <Button
                       variant="default"
                       onClick={handleSubmit}
-                      className="flex-1 glass-button liquid-glass-hover"
+                      className="flex-1"
                     >
                       Add Component
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => setActiveAction(null)}
-                      className="flex-1 glass-button liquid-glass-hover"
+                      className="flex-1"
                     >
                       Cancel
                     </Button>
@@ -244,13 +243,13 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
       {/* Desktop Modal */}
       {activeAction && (
         <div className="hidden lg:block fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="glass-panel rounded-lg shadow-prominent max-w-md w-full animate-scale-in">
+          <div className="bg-surface rounded-lg shadow-prominent max-w-md w-full animate-scale-in">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-text-primary glass-text-readable">{activeAction.title}</h3>
+                <h3 className="text-lg font-semibold text-text-primary">{activeAction.title}</h3>
                 <button
                   onClick={() => setActiveAction(null)}
-                  className="p-2 hover:bg-muted rounded-md transition-smooth glass-button liquid-glass-hover"
+                  className="p-2 hover:bg-muted rounded-md transition-smooth"
                 >
                   <Icon name="X" size={20} />
                 </button>
@@ -261,13 +260,13 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
                   <div key={field.name}>
                     {field.type === 'select' ? (
                       <div>
-                        <label className="block text-sm font-medium text-text-primary mb-2 glass-text-readable">
+                        <label className="block text-sm font-medium text-text-primary mb-2">
                           {field.label}
                         </label>
                         <select
                           value={formData[field.name] || ''}
                           onChange={(e) => handleInputChange(field.name, e.target.value)}
-                          className="w-full px-3 py-2 border border-white/20 rounded-md glass-morphism text-text-primary glass-text-readable"
+                          className="w-full px-3 py-2 border border-border rounded-md bg-surface text-text-primary"
                         >
                           <option value="">Select {field.label}</option>
                           {field.options.map((option) => (
@@ -284,7 +283,6 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
                         value={formData[field.name] || ''}
                         onChange={(e) => handleInputChange(field.name, e.target.value)}
                         placeholder={field.placeholder}
-                        className="glass-morphism glass-text-readable"
                       />
                     )}
                   </div>
@@ -295,14 +293,14 @@ const QuickActions = ({ onAddComponent, isVisible, onClose }) => {
                 <Button
                   variant="default"
                   onClick={handleSubmit}
-                  className="flex-1 glass-button liquid-glass-hover"
+                  className="flex-1"
                 >
                   Add Component
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setActiveAction(null)}
-                  className="flex-1 glass-button liquid-glass-hover"
+                  className="flex-1"
                 >
                   Cancel
                 </Button>
