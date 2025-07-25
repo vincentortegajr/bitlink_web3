@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { cn } from '../../../utils/cn';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';

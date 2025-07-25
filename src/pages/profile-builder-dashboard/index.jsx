@@ -6,11 +6,9 @@ import ComponentLibrary from './components/ComponentLibrary';
 import ProfilePreview from './components/ProfilePreview';
 import PropertyPanel from './components/PropertyPanel';
 import QuickActions from './components/QuickActions';
-import { useNavigate } from 'react-router-dom';
 import { loadTheme, saveTheme } from '../../utils/themes';
 
 const ProfileBuilderDashboard = () => {
-  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('mobile');
   const [selectedComponent, setSelectedComponent] = useState(null);
   const [components, setComponents] = useState([]);

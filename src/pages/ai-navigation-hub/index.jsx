@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
@@ -17,12 +17,6 @@ const AINavigationHub = () => {
   const [communityFeed, setCommunityFeed] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateMenu, setShowCreateMenu] = useState(false);
-  const [userProfile, setUserProfile] = useState({
-    username: 'user_creator',
-    avatar: '/api/placeholder/40/40',
-    creationsCount: 127,
-    likesReceived: 1243
-  });
 
   // AI Tools Configuration - Expandable Architecture
   const aiTools = [
