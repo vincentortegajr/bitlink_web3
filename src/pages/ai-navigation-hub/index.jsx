@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
@@ -168,7 +168,7 @@ const AINavigationHub = () => {
     };
 
     loadCommunityFeed();
-  }, [sortBy, filterType, mockCommunityData]);
+  }, [sortBy, filterType]);
 
   // Filter and sort community feed
   const filteredFeed = communityFeed.filter(item => {
