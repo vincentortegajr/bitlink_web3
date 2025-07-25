@@ -99,6 +99,12 @@ As a terrified junior developer, I must assume every previous fix mentioned in t
 - [ ] **TEST**: Ensure no content is cut off at bottom of pages
 - [ ] **VALIDATE**: Confirm safe area handling works on notched devices
 
+### **PHASE 6: LINT CONFIGURATION REPAIR** 🚨
+- [ ] **INVESTIGATE**: ESLint fails with missing "react-app" config
+- [ ] **FIX**: Add or update ESLint configuration so `npm run lint` passes
+- [ ] **VERIFY**: Run `npm run lint` to ensure no configuration errors
+- [ ] **DOCUMENT**: Note the resolution steps in AGENTS.md
+
 ---
 
 # **BitLink Web3 Platform - Ultimate Vision & Architecture**
