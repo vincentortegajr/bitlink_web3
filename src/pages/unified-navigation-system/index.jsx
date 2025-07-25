@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 import { cn } from '../../utils/cn';
@@ -178,7 +177,6 @@ const UnifiedNavigationSystem = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       
       {/* Desktop Dual Sidebar Layout */}
       <div className="hidden lg:flex h-[calc(100vh-4rem)]">
@@ -413,52 +411,6 @@ const UnifiedNavigationSystem = () => {
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation - Web3 LinkTree Primary */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-glass border-t border-border z-50">
-        <div className="safe-area-pb">
-          <div className="flex items-center justify-around px-2 py-2">
-            {web3Navigation.slice(0, 4).map((nav) => (
-              <button
-                key={nav.id}
-                onClick={() => handleTabClick(nav.id)}
-                className={cn(
-                  "flex flex-col items-center justify-center px-2 py-2 rounded-lg text-xs font-medium transition-all min-w-[44px] min-h-[44px] touch-manipulation",
-                  activeTab === nav.id && currentContext === 'web3'
-                    ? "text-primary bg-primary/10 border border-primary/20" :"text-text-secondary hover:text-text-primary"
-                )}
-              >
-                <Icon 
-                  name={nav.icon} 
-                  size={18} 
-                  className={activeTab === nav.id && currentContext === 'web3' ? 'text-primary' : 'text-current'} 
-                />
-                <span className="truncate max-w-[50px] leading-tight mt-1">
-                  {nav.name}
-                </span>
-              </button>
-            ))}
-            
-            {/* AI Studio Button */}
-            <button
-              onClick={handleAIStudioToggle}
-              className={cn(
-                "flex flex-col items-center justify-center px-2 py-2 rounded-lg text-xs font-medium transition-all min-w-[44px] min-h-[44px] touch-manipulation",
-                currentContext === 'ai'
-                  ? "text-accent bg-accent/10 border border-accent/20" :"text-text-secondary hover:text-text-primary"
-              )}
-            >
-              <Icon 
-                name="Sparkles" 
-                size={18} 
-                className={currentContext === 'ai' ? 'text-accent' : 'text-current'} 
-              />
-              <span className="truncate max-w-[50px] leading-tight mt-1">
-                AI Studio
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

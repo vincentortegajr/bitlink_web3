@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
 import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
-import UnifiedNavigation from "components/ui/UnifiedNavigation";
+import BetterNavigation from "components/ui/BetterNavigation";
 
 // Import all pages
 import ProfileBuilderDashboard from "pages/profile-builder-dashboard";
@@ -55,8 +55,8 @@ const Routes = () => {
     <BrowserRouter>
       <ErrorBoundary>
         <ScrollToTop />
-        {/* UNIFIED NAVIGATION - Single source of truth with enhanced mobile positioning */}
-        <UnifiedNavigation />
+        {/* Improved responsive navigation */}
+        <BetterNavigation />
         
         {/* CRITICAL FIX: Enhanced main content container with proper spacing */}
         <main 

@@ -11,7 +11,6 @@ import GenerationSettings from './components/GenerationSettings';
 import GPUResourceMonitor from './components/GPUResourceMonitor';
 import GenerationHistory from './components/GenerationHistory';
 import GenerationPreview from './components/GenerationPreview';
-import Header from '../../components/ui/Header';
 
 const AITextToImageGenerator = () => {
   const navigate = useNavigate();
@@ -191,7 +190,6 @@ const AITextToImageGenerator = () => {
 
   return (
     <div className="mobile-full-height mobile-viewport-fix bg-background">
-      <Header />
       
       <div className="container mx-auto px-4 py-6 mobile-container">
         {/* Page Header with enhanced styling */}

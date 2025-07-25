@@ -71,6 +71,7 @@ As a terrified junior developer, I must assume every previous fix mentioned in t
 - [ ] **FIX**: Add additional bulletproof CSS rules if navigation disconnects
 - [ ] **TEST**: Verify hardware acceleration is working on older devices
 - [ ] **VALIDATE**: Confirm z-index management prevents any floating issues
+- [x] **REMOVE**: Delete page-level bottom nav bars now that BetterNavigation is global
 
 ### **PHASE 2: AI STUDIO ACCESSIBILITY COMPLIANCE** 🚨
 - [ ] **AUDIT**: Use WebAIM Color Contrast Checker on all AI Studio dropdown text

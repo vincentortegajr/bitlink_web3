@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Icon from '../../components/AppIcon';
@@ -218,7 +217,6 @@ const AINavigationHub = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
-      <Header />
       
       {/* Desktop Header Navigation */}
       <div className="hidden md:block sticky top-16 bg-surface/95 backdrop-blur-glass border-b border-border z-40">
@@ -562,42 +560,6 @@ const AINavigationHub = () => {
         )}
       </div>
 
-      {/* Mobile Bottom Navigation - Midjourney Style */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-glass border-t border-border z-50">
-        <div className="flex items-center justify-around px-2 py-3">
-          {[
-            { id: 'menu', label: 'Menu', icon: 'Menu' },
-            { id: 'explore', label: 'Explore', icon: 'Compass' },
-            { id: 'create', label: 'Create', icon: 'Plus' },
-            { id: 'organize', label: 'Organize', icon: 'FolderOpen' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => {
-                if (tab.id === 'create') {
-                  setShowCreateMenu(true);
-                } else {
-                  setActiveTab(tab.id);
-                }
-              }}
-              className={cn(
-                "flex flex-col items-center justify-center space-y-1 px-2 py-2 rounded-lg text-xs font-medium transition-all min-w-[44px] min-h-[44px] touch-manipulation",
-                activeTab === tab.id && tab.id !== 'create'
-                  ? "text-primary bg-primary/10 border border-primary/20" :"text-text-secondary hover:text-text-primary hover:bg-muted/50"
-              )}
-            >
-              <Icon 
-                name={tab.icon} 
-                size={20} 
-                className={activeTab === tab.id && tab.id !== 'create' ? 'text-primary' : 'text-current'} 
-              />
-              <span className="truncate max-w-[60px] leading-tight">
-                {tab.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };

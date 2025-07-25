@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
 
 import Icon from '../../components/AppIcon';
@@ -203,7 +202,6 @@ const AIVideoToLipsyncGenerator = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       
       <div className="container mx-auto px-4 py-6">
         {/* Page Header */}

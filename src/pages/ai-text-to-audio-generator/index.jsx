@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 import { cn } from '../../utils/cn';
@@ -156,7 +155,6 @@ const AITextToAudioGenerator = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       
       <div className="container mx-auto px-4 py-6">
         {/* Page Header */}
