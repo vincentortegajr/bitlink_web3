@@ -5,7 +5,7 @@ const WalletStatusIndicator = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   const [balance, setBalance] = useState('0.00');
-  const [network, setNetwork] = useState('Base');
+  const [network] = useState('Base');
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
