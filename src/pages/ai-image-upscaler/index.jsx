@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
 
@@ -15,8 +14,6 @@ import BeforeAfterComparison from './components/BeforeAfterComparison';
 import BatchProcessor from './components/BatchProcessor';
 
 const AIImageUpscaler = () => {
-  const navigate = useNavigate();
-  
   // State management
   const [selectedImage, setSelectedImage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Icon from '../AppIcon';
 import Button from './Button';
@@ -15,7 +15,7 @@ const UnifiedNavigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Web3 LinkTree Navigation (Primary Platform)
-  const web3Navigation = [
+  const web3Navigation = useMemo(() => [
     {
       id: 'build',
       name: 'Build',
@@ -61,10 +61,10 @@ const UnifiedNavigation = () => {
       color: 'bg-red-500',
       gradient: 'from-red-500 to-red-600'
     }
-  ];
+  ], []);
 
   // AI Studio Tools (Secondary Features)
-  const aiTools = [
+  const aiTools = useMemo(() => [
     {
       id: 'text-to-image',
       name: 'Text-to-Image',
@@ -139,7 +139,7 @@ const UnifiedNavigation = () => {
       color: 'bg-indigo-500',
       gradient: 'from-indigo-500 to-purple-500'
     }
-  ];
+  ], []);
 
   // Wallet state
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -260,7 +260,7 @@ const UnifiedNavigation = () => {
       setCurrentContext('web3');
       setShowAIStudio(false);
     }
-  }, [location.pathname]);
+  }, [location.pathname, aiTools, web3Navigation]);
 
   // CRITICAL FIX: Enhanced click outside handler with better performance and error handling
   useEffect(() => {
@@ -293,7 +293,7 @@ const UnifiedNavigation = () => {
       document.removeEventListener('mousedown', handleClickOutside, { capture: true });
       document.removeEventListener('touchstart', handleClickOutside, { capture: true });
     };
-  }, [showAIStudio, currentContext, location.pathname]);
+  }, [showAIStudio, currentContext, location.pathname, web3Navigation]);
 
   // CRITICAL FIX: Enhanced navigation handler with error handling
   const handleNavigation = useCallback((route, context = 'web3') => {
@@ -324,7 +324,7 @@ const UnifiedNavigation = () => {
       setActiveTab('build');
       navigate('/');
     }
-  }, [navigate]);
+  }, [navigate, web3Navigation]);
 
   // CRITICAL FIX: Enhanced AI Studio toggle with better state management
   const handleAIStudioToggle = useCallback(() => {
@@ -350,7 +350,7 @@ const UnifiedNavigation = () => {
       console.error('AI Studio toggle error:', error);
       setShowAIStudio(false);
     }
-  }, [showAIStudio, currentContext, location.pathname]);
+  }, [showAIStudio, currentContext, location.pathname, web3Navigation]);
 
   const formatAddress = (address) => {
     if (!address) return '';

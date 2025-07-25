@@ -1,8 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
 import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
 import Icon from '../../components/AppIcon';
 import { cn } from '../../utils/cn';
 
@@ -13,14 +11,11 @@ import RealismCommunitySharing from './components/RealismCommunitySharing';
 import RunPodGPUMonitor from './components/RunPodGPUMonitor';
 
 const AIImageRealismModel = () => {
-  const navigate = useNavigate();
-  
   // State management
   const [inputImage, setInputImage] = useState(null);
   const [realisticImage, setRealisticImage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [estimatedTime, setEstimatedTime] = useState(0);
   const [activeTab, setActiveTab] = useState('transform');
   const [dragActive, setDragActive] = useState(false);
 
@@ -43,13 +38,6 @@ const AIImageRealismModel = () => {
     tags: [],
     category: 'cartoon',
     isPublic: false
-  });
-
-  const [processingStats, setProcessingStats] = useState({
-    processingTime: 0,
-    gpuUsage: 0,
-    memoryUsed: 0,
-    modelVersion: 'RealismGAN v2.1'
   });
 
   // Processing history
@@ -121,7 +109,7 @@ const AIImageRealismModel = () => {
 
     setIsProcessing(true);
     setProgress(0);
-    setEstimatedTime(120); // Initial estimate in seconds
+    // setEstimatedTime(120); // Initial estimate in seconds
     setActiveTab('transform');
 
     try {
@@ -149,13 +137,13 @@ const AIImageRealismModel = () => {
       const progressInterval = setInterval(() => {
         setProgress(prev => {
           const newProgress = Math.min(97, prev + Math.random() * 6);
-          setEstimatedTime(prev => Math.max(0, prev - 4));
-          setProcessingStats(prev => ({
-            ...prev,
-            processingTime: prev.processingTime + 1,
-            gpuUsage: 85 + Math.random() * 12,
-            memoryUsed: 8.2 + Math.random() * 2.8
-          }));
+          // setEstimatedTime(prev => Math.max(0, prev - 4));
+          // setProcessingStats(prev => ({
+          //   ...prev,
+          //   processingTime: prev.processingTime + 1,
+          //   gpuUsage: 85 + Math.random() * 12,
+          //   memoryUsed: 8.2 + Math.random() * 2.8
+          // }));
           return newProgress;
         });
       }, 2000);
@@ -164,7 +152,7 @@ const AIImageRealismModel = () => {
       setTimeout(() => {
         clearInterval(progressInterval);
         setProgress(100);
-        setEstimatedTime(0);
+        // setEstimatedTime(0);
         
         // Calculate realistic dimensions based on input
         const outputWidth = Math.min(2048, inputImage.width * 1.5);
@@ -200,12 +188,12 @@ const AIImageRealismModel = () => {
 
         setProcessingHistory(prev => [historyEntry, ...prev.slice(0, 19)]); // Keep last 20
 
-        setProcessingStats(prev => ({
-          ...prev,
-          processingTime: Math.round(processedResult.processingTime),
-          gpuUsage: 35,
-          memoryUsed: 4.1
-        }));
+        // setProcessingStats(prev => ({
+        //   ...prev,
+        //   processingTime: Math.round(processedResult.processingTime),
+        //   gpuUsage: 35,
+        //   memoryUsed: 4.1
+        // }));
 
         setIsProcessing(false);
       }, processingTimeEstimate);
@@ -252,7 +240,7 @@ const AIImageRealismModel = () => {
     setRealisticImage(null);
     setProgress(0);
     setIsProcessing(false);
-    setEstimatedTime(0);
+    // setEstimatedTime(0);
     setActiveTab('transform');
   };
 

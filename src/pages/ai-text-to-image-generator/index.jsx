@@ -1,7 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
 import Icon from '../../components/AppIcon';
 import { cn } from '../../utils/cn';
 
@@ -14,8 +12,6 @@ import GenerationPreview from './components/GenerationPreview';
 import Header from '../../components/ui/Header';
 
 const AITextToImageGenerator = () => {
-  const navigate = useNavigate();
-  
   // State management
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -73,7 +69,7 @@ const AITextToImageGenerator = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      await response.json();
       
       // CRITICAL FIX: Enhanced progress simulation with better UX
       const progressInterval = setInterval(() => {

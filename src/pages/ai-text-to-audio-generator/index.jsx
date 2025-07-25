@@ -1,5 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
 import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
@@ -15,8 +14,6 @@ import ExportSettings from './components/ExportSettings';
 import CommunitySharing from './components/CommunitySharing';
 
 const AITextToAudioGenerator = () => {
-  const navigate = useNavigate();
-  
   // State management
   const [text, setText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -84,7 +81,7 @@ const AITextToAudioGenerator = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         
         // Simulate progress updates
         const progressInterval = setInterval(() => {

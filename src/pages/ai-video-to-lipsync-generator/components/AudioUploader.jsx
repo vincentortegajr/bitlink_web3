@@ -32,9 +32,9 @@ const AudioUploader = ({ onAudioUpload, onAudioRemove, uploadedAudio, loading = 
     if (audioFile) {
       handleFileSelect(audioFile);
     }
-  }, []);
+  }, [handleFileSelect]);
 
-  const handleFileSelect = (file) => {
+  const handleFileSelect = useCallback((file) => {
     if (file && file.type.startsWith('audio/')) {
       // Simulate upload progress
       setUploadProgress(0);
@@ -63,7 +63,7 @@ const AudioUploader = ({ onAudioUpload, onAudioRemove, uploadedAudio, loading = 
       };
       reader.readAsDataURL(file);
     }
-  };
+  }, [onAudioUpload]);
 
   const handleFileInputChange = (e) => {
     const file = e.target.files?.[0];

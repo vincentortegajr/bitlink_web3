@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
 import Select from '../../../components/ui/Select';
@@ -10,8 +10,6 @@ const ExportSettings = ({
   disabled = false,
   mobile = false
 }) => {
-  const [previewSize, setPreviewSize] = useState(null);
-
   const updateSetting = (key, value) => {
     onSettingsChange?.({
       ...videoSettings,

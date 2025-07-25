@@ -1,5 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
 import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
 
@@ -17,9 +16,6 @@ import ExportSettings from './components/ExportSettings';
 import BatchProcessor from './components/BatchProcessor';
 
 const AIImageToVideoCreator = () => {
-  const navigate = useNavigate();
-  const fileInputRef = useRef(null);
-  
   // State management
   const [uploadedImages, setUploadedImages] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);

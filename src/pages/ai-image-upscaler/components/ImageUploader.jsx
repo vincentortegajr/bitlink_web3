@@ -13,7 +13,7 @@ const ImageUploader = ({
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
 
-  const validateFile = (file) => {
+  const validateFile = useCallback((file) => {
     setError('');
     
     // Check file type
@@ -30,7 +30,7 @@ const ImageUploader = ({
     }
 
     return true;
-  };
+  }, [acceptedFormats, maxFileSize]);
 
   const processFile = useCallback((file) => {
     if (!validateFile(file)) return;
@@ -53,7 +53,7 @@ const ImageUploader = ({
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
-  }, [onImageSelect, maxFileSize, acceptedFormats]);
+  }, [onImageSelect, validateFile]);
 
   const handleDragOver = (e) => {
     e.preventDefault();

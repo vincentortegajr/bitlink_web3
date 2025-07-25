@@ -16,7 +16,7 @@ const RealismComparison = ({
   const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef(null);
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [panOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (isDragging) {
@@ -213,7 +213,7 @@ const RealismComparison = ({
             <div className="aspect-[16/10] bg-muted rounded-lg overflow-hidden">
               <img
                 src={originalImage?.url}
-                alt="Original cartoon image"
+                alt="Original cartoon content"
                 className="w-full h-full object-contain"
                 style={{ transform: `scale(${zoomLevel}) translate(${panOffset.x}px, ${panOffset.y}px)` }}
               />
