@@ -122,11 +122,11 @@ const BetterNavigation = () => {
             onClick={() => setShowAIStudio(!showAIStudio)}
             className={cn(
               'flex flex-col items-center text-xs font-medium px-2',
-              active.startsWith('ai') ? 'text-accent' : 'text-text-secondary'
+              typeof active === 'string' && active.startsWith('ai') ? 'text-accent' : 'text-text-secondary'
             )}
             aria-label="AI Studio"
             aria-expanded={showAIStudio}
-            aria-current={active.startsWith('ai') ? 'page' : undefined}
+            aria-current={typeof active === 'string' && active.startsWith('ai') ? 'page' : undefined}
           >
             <Icon name="Sparkles" size={20} />
             <span className="mt-1">AI Studio</span>
