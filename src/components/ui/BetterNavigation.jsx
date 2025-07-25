@@ -66,13 +66,13 @@ const BetterNavigation = () => {
               </Button>
             ))}
             <Button
-              variant={active.startsWith('ai') ? 'default' : 'ghost'}
+              variant={typeof active === 'string' && active.startsWith('ai') ? 'default' : 'ghost'}
               onClick={() => setShowAIStudio(!showAIStudio)}
               iconName="Sparkles"
               size="sm"
               aria-expanded={showAIStudio}
               aria-haspopup="true"
-              aria-current={active.startsWith('ai') ? 'page' : undefined}
+              aria-current={typeof active === 'string' && active.startsWith('ai') ? 'page' : undefined}
             >
               AI Studio
             </Button>
