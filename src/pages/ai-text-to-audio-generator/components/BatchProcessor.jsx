@@ -37,19 +37,6 @@ const BatchProcessor = ({
     onTextsChange?.(texts.filter(text => text.id !== id));
   };
 
-  const updateText = (id, newTextContent) => {
-    onTextsChange?.(texts.map(text => 
-      text.id === id 
-        ? { 
-            ...text, 
-            text: newTextContent,
-            title: newTextContent.slice(0, 50) + (newTextContent.length > 50 ? '...' : ''),
-            estimatedTime: Math.ceil(newTextContent.length / 15)
-          }
-        : text
-    ));
-  };
-
   const processBatch = async () => {
     if (texts.length === 0) return;
     

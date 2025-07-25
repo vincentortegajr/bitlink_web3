@@ -13,7 +13,7 @@ const GPUResourceMonitor = ({ isGenerating = false }) => {
     totalNodes: 12
   });
 
-  const [usageStats, setUsageStats] = useState({
+  const [usageStats] = useState({
     creditsRemaining: 250,
     totalCredits: 500,
     processingTime: 1450, // seconds

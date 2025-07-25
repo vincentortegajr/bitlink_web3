@@ -30,7 +30,7 @@ const VideoUploader = ({ onVideoUpload, onVideoRemove, uploadedVideo, loading = 
     }
   }, [handleFileSelect]);
 
-  const handleFileSelect = (file) => {
+  const handleFileSelect = useCallback((file) => {
     if (file && file.type.startsWith('video/')) {
       // Simulate upload progress
       setUploadProgress(0);
@@ -59,7 +59,7 @@ const VideoUploader = ({ onVideoUpload, onVideoRemove, uploadedVideo, loading = 
       };
       reader.readAsDataURL(file);
     }
-  };
+  }, [onVideoUpload]);
 
   const handleFileInputChange = (e) => {
     const file = e.target.files?.[0];
