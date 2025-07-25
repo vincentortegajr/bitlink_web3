@@ -1,8 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
 import Header from '../../components/ui/Header';
 import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
 import Icon from '../../components/AppIcon';
 import { cn } from '../../utils/cn';
 
@@ -13,8 +11,6 @@ import RealismCommunitySharing from './components/RealismCommunitySharing';
 import RunPodGPUMonitor from './components/RunPodGPUMonitor';
 
 const AIImageRealismModel = () => {
-  const navigate = useNavigate();
-  
   // State management
   const [inputImage, setInputImage] = useState(null);
   const [realisticImage, setRealisticImage] = useState(null);

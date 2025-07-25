@@ -19,19 +19,7 @@ const ImageUploader = ({ onImageUpload, onImageRemove, uploadedImage, loading = 
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const files = Array.from(e.dataTransfer.files);
-    const imageFile = files.find(file => file.type.startsWith('image/'));
-    
-    if (imageFile) {
-      handleFileSelect(imageFile);
-    }
-  }, []);
-
-  const handleFileSelect = (file) => {
+  const handleFileSelect = useCallback((file) => {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -47,7 +35,19 @@ const ImageUploader = ({ onImageUpload, onImageRemove, uploadedImage, loading = 
       };
       reader.readAsDataURL(file);
     }
-  };
+  }, [onImageUpload]);
+
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    const imageFile = files.find(file => file.type.startsWith('image/'));
+    
+    if (imageFile) {
+      handleFileSelect(imageFile);
+    }
+  }, [handleFileSelect]);
 
   const handleFileInputChange = (e) => {
     const file = e.target.files?.[0];
