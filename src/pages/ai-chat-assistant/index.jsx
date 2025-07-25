@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Paperclip, Settings, MessageSquare, Trash2, Download, Bot, Zap, Code, Sparkles } from 'lucide-react';
 import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
 
 import ChatMessage from './components/ChatMessage';
 import ModelSelector from './components/ModelSelector';
@@ -10,7 +9,6 @@ import ConversationSidebar from './components/ConversationSidebar';
 import AdvancedSettings from './components/AdvancedSettings';
 import VoiceInput from './components/VoiceInput';
 import TypingIndicator from './components/TypingIndicator';
-import ChatExport from './components/ChatExport';
 
 const AIChatAssistant = () => {
   const [messages, setMessages] = useState([
