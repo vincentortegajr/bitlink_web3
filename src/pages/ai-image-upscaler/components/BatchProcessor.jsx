@@ -9,7 +9,7 @@ const BatchProcessor = ({
   processingQueue = [] 
 }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploading] = useState(false);
   const [batchSettings, setBatchSettings] = useState({
     ...settings,
     outputNaming: 'original_upscaled', // original_upscaled, sequential, timestamp
