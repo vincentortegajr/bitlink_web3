@@ -10,7 +10,6 @@ const TimelineEditor = ({
   disabled = false,
   mobile = false
 }) => {
-  const [isDragging, setIsDragging] = useState(false);
   const [selectedKeyframe, setSelectedKeyframe] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const timelineRef = useRef(null);

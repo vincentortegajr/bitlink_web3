@@ -260,7 +260,7 @@ const UnifiedNavigation = () => {
       setCurrentContext('web3');
       setShowAIStudio(false);
     }
-  }, [location.pathname]);
+  }, [location.pathname, aiTools, web3Navigation]);
 
   // CRITICAL FIX: Enhanced click outside handler with better performance and error handling
   useEffect(() => {
@@ -293,7 +293,7 @@ const UnifiedNavigation = () => {
       document.removeEventListener('mousedown', handleClickOutside, { capture: true });
       document.removeEventListener('touchstart', handleClickOutside, { capture: true });
     };
-  }, [showAIStudio, currentContext, location.pathname]);
+  }, [showAIStudio, currentContext, location.pathname, web3Navigation]);
 
   // CRITICAL FIX: Enhanced navigation handler with error handling
   const handleNavigation = useCallback((route, context = 'web3') => {
@@ -324,7 +324,7 @@ const UnifiedNavigation = () => {
       setActiveTab('build');
       navigate('/');
     }
-  }, [navigate]);
+  }, [navigate, web3Navigation]);
 
   // CRITICAL FIX: Enhanced AI Studio toggle with better state management
   const handleAIStudioToggle = useCallback(() => {
@@ -350,7 +350,7 @@ const UnifiedNavigation = () => {
       console.error('AI Studio toggle error:', error);
       setShowAIStudio(false);
     }
-  }, [showAIStudio, currentContext, location.pathname]);
+  }, [showAIStudio, currentContext, location.pathname, web3Navigation]);
 
   const formatAddress = (address) => {
     if (!address) return '';

@@ -10,8 +10,6 @@ const ExportSettings = ({
   disabled = false,
   mobile = false
 }) => {
-  const [previewSize, setPreviewSize] = useState(null);
-
   const updateSetting = (key, value) => {
     onSettingsChange?.({
       ...videoSettings,
