@@ -114,7 +114,6 @@ const AnalyticsPerformanceDashboard = () => {
 
   return (
     <div className="mobile-full-height mobile-viewport-fix bg-background">
-      {/* Remove Header component - CRITICAL FIX */}
       <div className="hidden lg:block">
         <QuickActionToolbar />
       </div>
