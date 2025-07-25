@@ -15,8 +15,6 @@ import GPUResourceMonitor from './components/GPUResourceMonitor';
 import PreviewPlayer from './components/PreviewPlayer';
 
 const AIVideoToLipsyncGenerator = () => {
-  const navigate = useNavigate();
-  
   // State management
   const [videoFile, setVideoFile] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
@@ -25,7 +23,6 @@ const AIVideoToLipsyncGenerator = () => {
   const [estimatedTime, setEstimatedTime] = useState(0);
   const [processedVideo, setProcessedVideo] = useState(null);
   const [activeTab, setActiveTab] = useState('upload'); // upload, timeline, preview, settings
-  const [showMobileSettings, setShowMobileSettings] = useState(false);
 
   // Processing settings
   const [settings, setSettings] = useState({

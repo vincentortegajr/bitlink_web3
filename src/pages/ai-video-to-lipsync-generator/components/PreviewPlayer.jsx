@@ -19,7 +19,6 @@ const PreviewPlayer = ({
   const [playbackRate, setPlaybackRate] = useState(1);
   const [comparisonMode, setComparisonMode] = useState(false);
   const videoRef = useRef(null);
-  const canvasRef = useRef(null);
 
   const togglePlayback = useCallback(() => {
     if (videoRef.current) {

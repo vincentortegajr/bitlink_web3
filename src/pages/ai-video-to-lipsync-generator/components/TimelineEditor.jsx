@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { cn } from '../../../utils/cn';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
@@ -6,10 +6,9 @@ import Icon from '../../../components/AppIcon';
 const TimelineEditor = ({ videoFile, audioFile, onSyncAdjustment, disabled = false }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(30); // Default duration
+  const [duration] = useState(30); // Default duration
   const [zoomLevel, setZoomLevel] = useState(1);
   const [syncOffset, setSyncOffset] = useState(0);
-  const [keyframes, setKeyframes] = useState([]);
   const [selectedKeyframe, setSelectedKeyframe] = useState(null);
   const timelineRef = useRef(null);
 
