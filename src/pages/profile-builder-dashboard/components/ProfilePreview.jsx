@@ -3,7 +3,7 @@ import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import LiquidGlassContainer from 'components/LiquidGlassContainer';
 
-import { getTheme } from '../../../utils/themes';
+import { getTheme } from '@utils/themes';
 
 const ProfilePreview = ({ 
   profileData, 
