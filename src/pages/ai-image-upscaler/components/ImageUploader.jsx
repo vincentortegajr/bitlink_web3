@@ -53,7 +53,7 @@ const ImageUploader = ({
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
-  }, [onImageSelect, maxFileSize, acceptedFormats]);
+  }, [onImageSelect, maxFileSize, acceptedFormats, validateFile]);
 
   const handleDragOver = (e) => {
     e.preventDefault();

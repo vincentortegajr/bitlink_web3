@@ -9,7 +9,7 @@ const RealismBatchProcessor = ({
   processingQueue = [] 
 }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   
   const [batchSettings, setBatchSettings] = useState({

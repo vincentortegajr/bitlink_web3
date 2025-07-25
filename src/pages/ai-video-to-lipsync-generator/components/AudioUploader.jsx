@@ -32,7 +32,7 @@ const AudioUploader = ({ onAudioUpload, onAudioRemove, uploadedAudio, loading = 
     if (audioFile) {
       handleFileSelect(audioFile);
     }
-  }, []);
+  }, [handleFileSelect]);
 
   const handleFileSelect = (file) => {
     if (file && file.type.startsWith('audio/')) {

@@ -28,7 +28,7 @@ const VideoUploader = ({ onVideoUpload, onVideoRemove, uploadedVideo, loading = 
     if (videoFile) {
       handleFileSelect(videoFile);
     }
-  }, []);
+  }, [handleFileSelect]);
 
   const handleFileSelect = (file) => {
     if (file && file.type.startsWith('video/')) {

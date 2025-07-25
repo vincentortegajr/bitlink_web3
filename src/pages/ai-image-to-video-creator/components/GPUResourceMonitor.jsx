@@ -17,6 +17,7 @@ const GPUResourceMonitor = ({
     throughput: 2.3
   });
 
+  const [connectionStatus] = useState('connected');
   const [runpodEndpoints, setRunpodEndpoints] = useState([
     {
       id: 'gpu-1',

@@ -29,7 +29,7 @@ const ImageUploader = ({ onImageUpload, onImageRemove, uploadedImage, loading = 
     if (imageFile) {
       handleFileSelect(imageFile);
     }
-  }, []);
+  }, [handleFileSelect]);
 
   const handleFileSelect = (file) => {
     if (file && file.type.startsWith('image/')) {

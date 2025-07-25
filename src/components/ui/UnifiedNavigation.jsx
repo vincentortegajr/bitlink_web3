@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Icon from '../AppIcon';
 import Button from './Button';
@@ -15,7 +15,7 @@ const UnifiedNavigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Web3 LinkTree Navigation (Primary Platform)
-  const web3Navigation = [
+  const web3Navigation = useMemo(() => [
     {
       id: 'build',
       name: 'Build',
@@ -61,10 +61,10 @@ const UnifiedNavigation = () => {
       color: 'bg-red-500',
       gradient: 'from-red-500 to-red-600'
     }
-  ];
+  ], []);
 
   // AI Studio Tools (Secondary Features)
-  const aiTools = [
+  const aiTools = useMemo(() => [
     {
       id: 'text-to-image',
       name: 'Text-to-Image',
@@ -139,7 +139,7 @@ const UnifiedNavigation = () => {
       color: 'bg-indigo-500',
       gradient: 'from-indigo-500 to-purple-500'
     }
-  ];
+  ], []);
 
   // Wallet state
   const [isWalletConnected, setIsWalletConnected] = useState(false);
