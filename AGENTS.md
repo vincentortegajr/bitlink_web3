@@ -43,3 +43,5 @@ Use the table format shown below. Example:
 |------|-------|--------|-----------|---------|
 | 2025-07-25 | codex | work | c25f340 | Initial AGENTS log added |
 | 2025-07-25 | codex | work | bff2954 | Add vite.config.mjs |
+
+| 2025-07-25 | codex | work | audit-only | Document audit results |
