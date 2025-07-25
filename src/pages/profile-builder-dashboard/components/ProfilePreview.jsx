@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
+import Icon from 'components/AppIcon';
+import Image from 'components/AppImage';
+import LiquidGlassContainer from 'components/LiquidGlassContainer';
 
 import { getTheme } from '../../../utils/themes';
 
@@ -378,7 +379,7 @@ const ProfilePreview = ({
 
   return (
     <div className="px-2 sm:px-6 lg:px-8">
-      <div className={`${containerClass} relative bg-gradient-to-br ${theme.background} rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 border border-white/20 backdrop-blur-lg`}>
+      <LiquidGlassContainer className={`${containerClass} bg-gradient-to-br ${theme.background} shadow-2xl hover:shadow-3xl transition-all duration-500 border border-white/20`}>
         {/* TikTok-style animated gradient overlay */}
         <div className={`absolute inset-0 bg-gradient-to-br ${theme.overlay} animate-pulse`}></div>
         
@@ -571,7 +572,7 @@ const ProfilePreview = ({
             Powered by <span className="font-semibold text-white tracking-wide drop-shadow-md">BitLink Web3</span>
           </p>
         </div>
-      </div>
+      </LiquidGlassContainer>
     </div>
   );
 };
